@@ -27,7 +27,7 @@
     
     
       
-        <title>通信库 - SuperPod 技术白皮书</title>
+        <title>🔒 通信库 - SuperPod 技术白皮书</title>
       
     
     
@@ -120,7 +120,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              通信库
+              🔒 通信库
             
           </span>
         </div>
@@ -242,7 +242,7 @@
   
     
   
-  首页
+  🔒 首页
 
       </a>
     </li>
@@ -373,7 +373,7 @@
   
     
   
-  总结
+  🔒 总结
 
       </a>
     </li>
@@ -392,7 +392,7 @@
   
     
   
-  附录
+  🔒 附录
 
       </a>
     </li>
@@ -458,11 +458,18 @@
   <span class="md-ellipsis">
     
   
-    首页
+    🔒 首页
   
 
     
   </span>
+  
+    
+  
+  
+    <span class="md-status md-status--encrypted"></span>
+  
+
   
   
 
@@ -566,7 +573,7 @@
   <span class="md-ellipsis">
     
   
-    国内外实践
+    🔒 国内外实践
   
 
     
@@ -594,7 +601,7 @@
   <span class="md-ellipsis">
     
   
-    Scale-Up 协议
+    🔒 Scale-Up 协议
   
 
     
@@ -622,7 +629,7 @@
   <span class="md-ellipsis">
     
   
-    Scale-Up 拓扑
+    🔒 Scale-Up 拓扑
   
 
     
@@ -650,7 +657,7 @@
   <span class="md-ellipsis">
     
   
-    电气接口
+    🔒 电气接口
   
 
     
@@ -678,7 +685,7 @@
   <span class="md-ellipsis">
     
   
-    系统架构
+    🔒 系统架构
   
 
     
@@ -706,7 +713,7 @@
   <span class="md-ellipsis">
     
   
-    服务器架构
+    🔒 服务器架构
   
 
     
@@ -858,7 +865,7 @@
   <span class="md-ellipsis">
     
   
-    通信库
+    🔒 通信库
   
 
     
@@ -876,7 +883,7 @@
   <span class="md-ellipsis">
     
   
-    通信库
+    🔒 通信库
   
 
     
@@ -1570,7 +1577,7 @@
   <span class="md-ellipsis">
     
   
-    总结
+    🔒 总结
   
 
     
@@ -1597,7 +1604,7 @@
   <span class="md-ellipsis">
     
   
-    附录
+    🔒 附录
   
 
     
@@ -1711,65 +1718,34 @@
   
 
 
-<h1 id="_1">通信库的架构与设计<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<blockquote>
-<p>产出：在分布式共享内存语义下补充通信库，为集合通信补充新型通信语义。</p>
-</blockquote>
-<h2 id="_2">集合通信语义在超节点上的收益<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<ul>
-<li>AllReduce / Broadcast / ReduceScatter / AllGather 在 HBD 域可近似线速，瓶颈在跨 HBD 收敛比与拥塞。</li>
-<li>分层通信：HBD 内高频小粒度，HBD 间聚合/稀疏化，提升全局吞吐。</li>
-<li>对比 BSP 模式：传统 SPMD + 屏障在非均匀负载（MoE、长序列）下放大 straggler 问题，超节点需要更灵活的通信语义与分层调度。</li>
-</ul>
-<h2 id="all-to-all">All-to-All 性能分析<a class="headerlink" href="#all-to-all" title="Permanent link">&para;</a></h2>
-<ul>
-<li>小包抖动与大包拥塞是 A2A 的主要瓶颈；路由感知/负载感知的调度可减少热点。</li>
-<li>稀疏 A2A（MoE/分段推理）需结合拓扑感知与动态路由。</li>
-</ul>
-<h2 id="pgas">PGAS 内存模型与单边通信<a class="headerlink" href="#pgas" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Put/Get/原子等单边操作将“通信”退化为“内存访问”，天然适应非均匀负载 [@nvshmem_magnum_io; @openshmem15_spec; @pathways_dataflow]。</li>
-<li>GPU 运行时协同：Pinned 内存、内存注册、RDMA doorbell 映射、完成通知队列等。</li>
-<li>混合编程故事线：在 MoE 场景，热专家与冷专家负载差异大——集合通信易被慢专家拖累；使用单边通信将结果直接写入对端内存，再由对端按需消费，降低全局同步成本。</li>
-</ul>
-<h2 id="spmdbsp-vs-pgas">SPMD/BSP vs PGAS/单边通信（重述）<a class="headerlink" href="#spmdbsp-vs-pgas" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>特性</th>
-<th>SPMD + 集合通信 (BSP)</th>
-<th>PGAS + 单边通信</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>通信模式</td>
-<td>双边：Send/Recv 配对，强同步</td>
-<td>单边：Put/Get/原子，异步解耦</td>
-</tr>
-<tr>
-<td>性能风险</td>
-<td>Straggler 放大，屏障拖累长尾</td>
-<td>异步/稀疏友好，降低全局同步成本</td>
-</tr>
-<tr>
-<td>适用场景</td>
-<td>稠密训练、负载均匀</td>
-<td>MoE、长序列推理、异步数据流</td>
-</tr>
-<tr>
-<td>实现要点</td>
-<td>集合通信库（NCCL/HCCL）</td>
-<td>NVSHMEM/PGAS 语义、完成通知、内存注册</td>
-</tr>
-</tbody>
-</table>
-<h2 id="_3">待补充<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<ul>
-<li>[ ] API 设计草案与伪代码示例。</li>
-<li>[ ] 性能基线与基准测试列表。</li>
-<li>[ ] 故障恢复与重路由策略。</li>
-</ul>
+<div id="mkdocs-encrypted-content" style="display:none">eEtRh5OvdWCyLEYRa3NwwQ==;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</div>
+<div id="mkdocs-decrypted-content" style="display:none">
+    <form id="mkdocs-decrypt-form" class="md-content__inner md-typeset">
+        <h1>此页面内容已加密，请输入密码查看。</h1>
+        <p>请联系管理员获取访问密码。</p>
+        <input class="md-input" type="password" id="mkdocs-content-password" placeholder="请输入密码">
+        <button class="md-button md-button--primary" id="mkdocs-decrypt-button">解锁</button>
+        <p id="mkdocs-decrypt-msg"></p>
+    </form>
+</div>
+
+<script type="text/javascript">
+var encryptcontent_id = "encryptcontent_1";
+var encryptcontent_path = "superpod-whitepaper/02-software/comm-lib/";
+var decryption_failure_message = "\u5bc6\u7801\u9519\u8bef\uff0c\u8bf7\u91cd\u8bd5\u3002";
+var encryptcontent_keystore = ["ZtzoHFPNG6x2TLA16e4ByA==;Mcakc1jY8U1YSEbFGZvDek+u5Z5eyrFviJNxWAhio+0VwGoAa1gmMtaLa+UANs89SQ01gI1phvDC808tSjwDrbA/83pPtNoV/sRZVbHvvj6ovzjNTCkcOAkS0Gu1KHSR;46vKDhWlBI7swH+dZGfOsQ=="];
+var encryptcontent_obfuscate = 0;
+
+const encryptcontent_event = new Event("encryptcontent_event");
+var encryptcontent_done = false;
+</script>
+<script type="module">
+if (!window.hasOwnProperty("init_decryptor")) {
+    import("../../assets/javascripts/decrypt-contents.js");
+} else {
+    init_decryptor();
+}
+</script>
 
 
 

@@ -27,7 +27,7 @@
     
     
       
-        <title>内存语义 - SuperPod 技术白皮书</title>
+        <title>🔒 内存语义 - SuperPod 技术白皮书</title>
       
     
     
@@ -120,7 +120,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              内存语义
+              🔒 内存语义
             
           </span>
         </div>
@@ -242,7 +242,7 @@
   
     
   
-  首页
+  🔒 首页
 
       </a>
     </li>
@@ -373,7 +373,7 @@
   
     
   
-  总结
+  🔒 总结
 
       </a>
     </li>
@@ -392,7 +392,7 @@
   
     
   
-  附录
+  🔒 附录
 
       </a>
     </li>
@@ -458,11 +458,18 @@
   <span class="md-ellipsis">
     
   
-    首页
+    🔒 首页
   
 
     
   </span>
+  
+    
+  
+  
+    <span class="md-status md-status--encrypted"></span>
+  
+
   
   
 
@@ -566,7 +573,7 @@
   <span class="md-ellipsis">
     
   
-    国内外实践
+    🔒 国内外实践
   
 
     
@@ -594,7 +601,7 @@
   <span class="md-ellipsis">
     
   
-    Scale-Up 协议
+    🔒 Scale-Up 协议
   
 
     
@@ -622,7 +629,7 @@
   <span class="md-ellipsis">
     
   
-    Scale-Up 拓扑
+    🔒 Scale-Up 拓扑
   
 
     
@@ -650,7 +657,7 @@
   <span class="md-ellipsis">
     
   
-    电气接口
+    🔒 电气接口
   
 
     
@@ -678,7 +685,7 @@
   <span class="md-ellipsis">
     
   
-    系统架构
+    🔒 系统架构
   
 
     
@@ -706,7 +713,7 @@
   <span class="md-ellipsis">
     
   
-    服务器架构
+    🔒 服务器架构
   
 
     
@@ -830,7 +837,7 @@
   <span class="md-ellipsis">
     
   
-    内存语义
+    🔒 内存语义
   
 
     
@@ -848,7 +855,7 @@
   <span class="md-ellipsis">
     
   
-    内存语义
+    🔒 内存语义
   
 
     
@@ -962,7 +969,7 @@
   <span class="md-ellipsis">
     
   
-    通信库
+    🔒 通信库
   
 
     
@@ -1581,7 +1588,7 @@
   <span class="md-ellipsis">
     
   
-    总结
+    🔒 总结
   
 
     
@@ -1608,7 +1615,7 @@
   <span class="md-ellipsis">
     
   
-    附录
+    🔒 附录
   
 
     
@@ -1733,46 +1740,34 @@
   
 
 
-<h1 id="_1">内存语义的实现与使用<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<blockquote>
-<p>产出：硬件系统设计参考与异构分布式共享内存编程规范。</p>
-</blockquote>
-<h2 id="_2">互联层的内存语义<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Scale-Up 协议需暴露读写/原子/屏障等事务语义，并明确缓存一致性与完成通知模型。</li>
-<li>地址全局化：全局物理地址由 Fabric Manager 分配，页表 PTE 携带目标 GPU ID 供交换芯片路由 [@nvidia_fabric_manager]。</li>
-<li>目标是“通信即访存”：读/写/原子直接在 HBD 内完成，CPU 内核退出数据路径，只做控制平面。</li>
-</ul>
-<h2 id="gpu">GPU 的内存一致性<a class="headerlink" href="#gpu" title="Permanent link">&para;</a></h2>
-<ul>
-<li>GPU 内部一致性模型通过 NVLink/Fabric 扩展：UVA + 多级页表使远程显存透明可寻址。</li>
-<li>原子/订购与屏障需在协议层保证可见性，避免跨设备的乱序与失效。</li>
-</ul>
-<h2 id="scale-up">Scale-Up 域的统一编址<a class="headerlink" href="#scale-up" title="Permanent link">&para;</a></h2>
-<ul>
-<li>UVA/全局物理地址映射在 NVSwitch 域扩展为全局 PA，硬件完成地址翻译与路由，不再依赖 CPU 作为数据路径。</li>
-<li>IOMMU/权限：稀疏地址空间、分级访问控制与隔离域是共享内存安全性的前提。</li>
-<li>访问链路的故事版：驱动为远程 GPU 分配对等 ID → 页表把 VA 指向全局 PA → MMU 翻译得到目标 GPU → NVSwitch 路由到对端显存，完成如同本地的读写。</li>
-</ul>
-<h2 id="gpu_1">现代 GPU 访存体系（节点内）<a class="headerlink" href="#gpu_1" title="Permanent link">&para;</a></h2>
-<ul>
-<li>GPU 通过 UVA 将显存/主存映射到统一虚拟地址，页表支持多级映射与 4K–128K 页。  </li>
-<li>节点内 P2P：驱动分配 Peer ID，页表标记 Peer，MMU 翻译后直接经 NVLink/PCIe 访问对端显存。  </li>
-<li>内核只在资源管理时介入，数据路径由硬件直接完成。</li>
-</ul>
-<h2 id="_3">超节点访存体系（跨节点）<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<ul>
-<li>传统 PCIe P2P 受限于单一 Root Complex，无法跨物理节点统一访存。  </li>
-<li>超节点引入 <strong>全局物理地址空间</strong>：Fabric Manager 划分 47-bit 全局 PA 段，PTE 标记目标 GPU。  </li>
-<li>GPU 访问 VA → MMU 翻译出全局 PA + 目标 GPU → NVSwitch/Fabric 按地址路由到对端显存，CPU 不再参与数据面。  </li>
-<li>价值：跨节点统一寻址 + 低延迟读写，为单边通信与共享内存编程奠定硬件基础。</li>
-</ul>
-<h2 id="_4">待补充<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<ul>
-<li>[ ] 典型 API/编程模式示例（PGAS/共享内存）。</li>
-<li>[ ] 一致性/可见性保证矩阵。</li>
-<li>[ ] 性能与正确性的测试用例基线。</li>
-</ul>
+<div id="mkdocs-encrypted-content" style="display:none">AihYLBls97SnAcPIPq8orA==;2gdQEJm7nl9vckbkOMPZrTGbdPXmBb8W8PDpF83wQHiUSpEa7Yx4y+0XdLJcXMhGLkuoUz/dn2JUXNrg6i0OOzNFl27QgVLtZRAuy/+9HBR0Z6REiszzWiJq9P9Chh+ppks8BWKsXxgtrSqEK5f6IwC91h9PodCIpLuSAIscEJOX+dnQoguNAh4kxvWRq60RaUaLcZ3UVFQ4EVTqPIV+nB+wf6ZgJeR1fzfPcK5pGSdYcnQltBUk30li/dt0z8xe/R37rA7IB5DBYcKHuAaUichMfBNERW7m9F3/QB98Q9JtOSdSHQgNNoRgA5dg09FZHFuN4W+gwQHf2/cv2dtZx0/lS8wGCbPrl/5NvNLSXvwYue/1EzZymw0eSMS6MW9/lS21lJGLYKsPDil5+PJBjUiBg6QuFZrV/0zvxxWwiUPIgnx6fisft0E7AsFbVHOLldd5+goC0e9NH27mafXcEevGwGoWpzPxiM8D1+mMjtVfwfmjLQNAuso0wNagnRHxld7E3pjnRM5UcNQt9KqkGroJ9xlr4pTBDJM7JBxuF9viUMwzjmgG9Q9ARSigxw9RTqDA3HM9j9/8OomM5Ke8L87vpv4W1gcQJj8cra7z0IHlPtE8U/7JNtGz53iNIu4NzZe45g9uFvGAuOsX2WuHCK2mg95+1nFwcJPGPYNw/27WjKRQxAlKz4mdqTz03ACc/xbnzrLBwjiyHSN+yfKoMYihIttklqynecDQga5opsoIJwsBGjX6g5GyfNR+Rc8sVZF/nFEiMfC5KD3SL+cgLFyywf2piM8+EdIobOzyTDfzDwlzzkrH4BDGetE3zJgRTxEqPUnf/JJ1ExorI60/W2fWosTQFH9vSlNVdXPsQJv7R41BLhDnBV87IacLYPF7JLXin2CErySOzaMNrY0N67+NVZb4ZZRDSaZ0fMO+sjEG+whHuGpHVKBlopNvk3obgZGph5mhmfbYshPjkG4hnril5I5Px415r2GpYPerQXMNF5gcXh/0xXC8Mk+tQkX7HnZH0OGEmev0ZBTf557HGvjQeju5HcQv1h1AiXJDX2dcGbJ4z8YT1fu3YFIjlAZz0wHPjzHl5VeC4i1KsaoudOJCWkGnmSM9J0dlHZpBxjpB3CUXOuUV0LurS9DVJXlhqzz8vPTeEBM602oerMcq/FkiDOisV/VPXN/jxR2ZW5CeE5uGu/tsgv+uhcuAFEjxHw73Xc1w4Tb7Dhd0rZZ0lRLWq9TGV4lbLiU6uq3DfP164ExqiEdZ/jSuF4QzjfgOzvPkZHf/rIvbhczOEyGAo3QmmcUs5UJfLrPetd+OszUyXJxXFzXYAIBt80Ly6NnCm12Ne4loSS2gXEyNQJqKKshClWIxrR9Y093zDg2lIFbI8mWZO7KlZzDZQrzVsjy9mraFwA07oMEmo5eZkJnMiHaRlHGJaKLvXqZCOHeMjvCOAleHbaigKnpCgKsUkScl7lEPM32ae2dnBb+Y/qc7GGxGz4XrbogjAhUUZgtBrQWWfW1ID0H/3qJel/vQz+x4vt4yV9OKfjgjDPPvpOoiuLNupD1Z2fYMvH0cEoa9ZTMowm+Ba3mX3nKW6gNc6dNeAXw3A+lMZAQgzbq7owKjcHuF4Ynw1+BcJpoRfcMadvkpNBjUXmGqrMT2iwzseTJjfuytBX1Ta8lfJ6BMbbD0sYpiptsL68CpD/1je8YqxwxcZsE6rqFqx1CKIPpUFgkp61CpFj4uuQJVWbz8lSFHXogYTPN65iG9YdXKQKkAxIVeCfpsvCTd92xAxkWNtrDKr/76oa5oH63jMZYjTPPTrBsyG1e9DtSPXg9lPCj8RodD+J2jNr2OW0zoLueKyLcgrdkxvWFCfDv/A3qqOL5A7zhVtqpsx9uhVwTi+VmwJTm4n3HL3NrBN8lIot1us1QSrOjih8UQ2o9M5RnPcV7ehRpy8WE9Wl91P9IMKjlLO4/99jW8ufFw2cfJRmpIOnSFYMDaTgd6uKBpy23+nhmd/nOWNP+EQQ7RugZOYUcFQ1tN8wGSP3lYq10k8qT8M4O03d+7ini8asQQeSD1dBBkFdKgiRKEKZt3m/YTs3pX+IQTbMBY5pGMzumEL8crcyrAeFz5/nxTJ5CN8WFL2qVwiDoBEahetLwAwMu9zNiPBsOJMdjHxzIvxZyMW0uLleNFvKGwNKcAi/EWnGQvBINQgDOIuIU+NC00f1gOrZ1708lz0QlZI7uPsC6QqQyDKfiZGVX0pEe6fVw7krtrAN2+uNje8cA58A2GbojHR8OeIoynaIO2ZTPZdmGFqJqiRYCfVaEf+JZK7eUhFeB/SyESjmLYgqt9wGATZsiV9J7x37bkCFH9mWewNKtmrSwJ1XO+CxYZJqEhzNbIxTiydDpB+gUjrQKP/ofN3JavoczagW3ahRv8pRhkT7iOOl5t5HjZ1Hth3wNvyg/DOc5aUmQubPSDSAG6sxjzVV+riWFMeSEdCHy6ouYJFFKlto8ffegSqStpwV+X/hI/voHau6e8eINJi0OwX9nh9h3/uo8oCfd2gLTH8qNEjXcsm51lxTDZxzHhUlSuTxwPDH40eapambfXHBer/Qp1lRPlSKQlZneosJBaM7PW98UQHaRmtgDIXe4MPuv4sQS24T+8pa0vw0SAeNrZuyGFg3wWffHTPI2sRiBpQNuRCsCsGB5lZRD2plrTVGEuLBAmdCk1hltPnjfvNgierVNw6PBDfby9URvetnxqRo5oAXnpd6bs4XA6vBf4cNduQBznziIQTchFn8f60qRGu9sHWQfY4Dn1iIooxjcoDnT8/+gF43BO27VWQ2bKr8fABhm1aTonKXK/SVoVfZ+xDPv8f5J/G43SYOmDxYlK4G1JYVsECpxdFfHvAQL7z7kbNljqBr+MFkPse4aFwSQDokqo9sVQFE3ytZrD5yO3T/iZphGrYk/mKEd4Htx8hJCIl8d9RjaNYAND++UiQpD9Af3n9xs37Aj8PjDsIiSeqz6MfiPVVBStlZ8X1OAH5i0uYfi/tzp0aWFTLfUsbi1/2gIFSzrBkqdknG40bkjkd5WrWsGorA1QtLEquPzvHKpqmj6Gq8YMp/3DAKNZgbGbDNVqfdlRjiWbAo5RqAFRyaexmgbNgLXTeNmw3CalXn9iHxJKAlpBpMDi2yiOaD3ySRzxrVkcdUMDFr86r8Tut1c5uR7RleOvCx+WsKh/u2iOqcHB9/3zQBXuymKNORY9nVTp/a0gKanjqxxPXjUyIbO/uR1yLEB6OxFzSk8n9UwbbII1kU9lZnKZOYu2zC6RZtwKuo6SFKNBky+UPfulYLT0p2/gV7nSwx11RSbuhIQKy7vrxoE1DyX/EnXIaeCbqkCV4DtOWv+b4frDWeEkiJciFhM5qU5xUYWigIsPVvkzqxDvfPzsGMg+Dao7X6EDlgTOb7ScdjFPG2bYjeluZz5Opq6sALdrXnIl3N9l0NkTN6XCskaWwlV6Ao+Cu2M5f0GOD3wSfUehdUliRvfm+h/DPYB4BhsxRQyfc/gMumBqcaNtKoP/RtjW/T0MJuekWLIeK7dDJHjE+rVpxGrBlsTsjfNUW90PzMQXAHO/2n56lJARUMTD2fFr2WdCw7BGY0VOj/yZys/xhd52mm33aG/sPP+lg6KiflH4kLApJ8AUL1r5wckEYURKMEXt0tOKMEwjI1RyZh1UDXUazRfcDJGUrledCf+7dyIl3PZNQwfOEbadatzDTFeMR9XgUhqSvFxrZuZA0IZhTzJI6LaY1k+JeZz0NWUhCrc+PN/8M4+CD+rfLQ6GBqJaigwB6B6sMXfNc4X+CIJCUvzGjNyvakSCRQEZNlMUZx7FmIPfMZKeOdDp454l7JOGSjZ1W6I6WZ6ybESYZFxa+2FKA3SjDhuR1njn6JKNTtIYTBt1k80oIwZ5U57A8cDd2eg08MJFm0HurvcwhWqo77RjRTXTTOA5rhwF+dFvhSmz7zERsjIgfIGGxzKxC3J1uOIJUrN/XaXFOZpW2sknV9Pzvf31USohk3cjN4/oaHTzRjqE7V2LUh0Sdhc95ZAc49GlguUDFgwHU4WIfXaMC7Bc2DiLp45SZAi1F5p516EP</div>
+<div id="mkdocs-decrypted-content" style="display:none">
+    <form id="mkdocs-decrypt-form" class="md-content__inner md-typeset">
+        <h1>此页面内容已加密，请输入密码查看。</h1>
+        <p>请联系管理员获取访问密码。</p>
+        <input class="md-input" type="password" id="mkdocs-content-password" placeholder="请输入密码">
+        <button class="md-button md-button--primary" id="mkdocs-decrypt-button">解锁</button>
+        <p id="mkdocs-decrypt-msg"></p>
+    </form>
+</div>
+
+<script type="text/javascript">
+var encryptcontent_id = "encryptcontent_1";
+var encryptcontent_path = "superpod-whitepaper/02-software/memory-semantics/";
+var decryption_failure_message = "\u5bc6\u7801\u9519\u8bef\uff0c\u8bf7\u91cd\u8bd5\u3002";
+var encryptcontent_keystore = ["ZtzoHFPNG6x2TLA16e4ByA==;Mcakc1jY8U1YSEbFGZvDek+u5Z5eyrFviJNxWAhio+0VwGoAa1gmMtaLa+UANs89SQ01gI1phvDC808tSjwDrbA/83pPtNoV/sRZVbHvvj6ovzjNTCkcOAkS0Gu1KHSR;46vKDhWlBI7swH+dZGfOsQ=="];
+var encryptcontent_obfuscate = 0;
+
+const encryptcontent_event = new Event("encryptcontent_event");
+var encryptcontent_done = false;
+</script>
+<script type="module">
+if (!window.hasOwnProperty("init_decryptor")) {
+    import("../../assets/javascripts/decrypt-contents.js");
+} else {
+    init_decryptor();
+}
+</script>
 
 
 
