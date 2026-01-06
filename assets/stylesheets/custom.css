@@ -1,12 +1,69 @@
-/* SuperPod 技术白皮书 - 自定义样式 */
+/* ==========================================================================
+ * SuperPod 技术白皮书 - 自定义样式
+ * --------------------------------------------------------------------------
+ *  针对中文技术文档优化的排版样式
+ * ==========================================================================
+ */
 
-/* 主题色定义 */
+/* 0. 自托管字体 ------------------------------------------------------------ */
+/* 说明：
+ * - 请将字体文件放到 src/assets/fonts/
+ * - 建议使用 woff2（体积更小，加载更快）
+ *
+ * 期望的文件名（可按需调整）：
+ * - SourceHanSerifSC-Regular.woff2
+ * - SourceHanSansSC-Bold.woff2
+ * - SourceHanSansMonoSC-Medium.woff2   （如无“思源黑体等宽”，会回退到 JetBrains Mono 等）
+ */
+@font-face {
+  font-family: "Source Han Serif SC";
+  src: url("../fonts/SourceHanSerifSC-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Source Han Sans SC";
+  src: url("../fonts/SourceHanSansSC-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Source Han Sans Mono SC";
+  src: url("../fonts/SourceHanSansMonoSC-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 1. 主题色定义 ----------------------------------------------------------- */
 :root {
   --md-primary-fg-color: #0b2f6b;
   --md-primary-fg-color--light: #1a4485;
   --md-primary-fg-color--dark: #0a2456;
   --md-accent-fg-color: #2563eb;
   --md-accent-fg-color--transparent: rgba(37, 99, 235, 0.1);
+  
+  /* 字体策略（按你的要求）：
+   * - 正文：思源宋体 Regular
+   * - 标题：思源黑体 Bold
+   * - 代码：思源黑体 Medium（等宽版本），若缺失则回退到常见等宽字体
+   */
+  --sp-font-body: "Source Han Serif SC", "Songti SC", "STSong", "Noto Serif SC", serif;
+  --sp-font-heading: "Source Han Sans SC", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", sans-serif;
+  --sp-font-mono: "Source Han Sans Mono SC", "JetBrains Mono", "SFMono-Regular", "Menlo", "Consolas", monospace;
+
+  /* Material 的 token 仍保留，但我们会在下面显式覆盖具体元素的 font-family */
+  --md-text-font: var(--sp-font-body);
+  --md-code-font: var(--sp-font-mono);
+  
+  /* 语义化颜色变量 */
+  --blog-strong-color: var(--md-primary-fg-color);
+  --blog-blockquote-border: var(--md-accent-fg-color);
+  --blog-blockquote-bg: rgba(0, 0, 0, 0.02);
 }
 
 [data-md-color-scheme="slate"] {
@@ -14,77 +71,419 @@
   --md-primary-fg-color--light: #3b82f6;
   --md-primary-fg-color--dark: #1e3a8a;
   --md-accent-fg-color: #60a5fa;
+  --blog-blockquote-bg: rgba(255, 255, 255, 0.04);
 }
 
-/* 中文友好字体 */
-:root {
-  --md-text-font: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
-  --md-code-font: "JetBrains Mono", "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
+/* 2. 全局字体渲染优化 ------------------------------------------------------ */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-/* 优化中文排版 */
-.md-content {
-  line-height: 1.8;
-  letter-spacing: 0.01em;
+/* 3. 基础排版 -------------------------------------------------------------- */
+.md-typeset {
+  font-size: 0.9rem;
+  line-height: 1.85;
+  font-family: var(--sp-font-body);
+  /* 衬线中文 + 两端对齐时，字距略收敛更自然 */
+  letter-spacing: 0;
+  /* 中文与西文之间添加微小间距，提升可读性 */
+  word-spacing: 0.05em;
+  counter-reset: h2;
 }
 
-.md-content p {
+.md-typeset p {
   text-align: justify;
   text-justify: inter-ideograph;
+  margin: 1.2em 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  /* 中文为主时不建议断字；英文/URL 交给 overflow-wrap */
+  hyphens: manual;
+  /* 避免段首悬挂标点 */
+  hanging-punctuation: first last;
+  /* 优化中文标点挤压（实验性，仅Safari支持，其他浏览器会忽略） */
+  /* stylelint-disable-next-line property-no-unknown */
+  text-spacing: trim-start allow-end ideograph-alpha ideograph-numeric;
 }
 
-/* 标题样式 */
-.md-content h1,
-.md-content h2,
-.md-content h3,
-.md-content h4,
-.md-content h5,
-.md-content h6 {
+.md-typeset hr {
+  height: 1px;
+  background-color: #eaecef;
+  border: 0;
+  margin: 2em 0;
+}
+
+/* 4. 标题体系与自动编号 ---------------------------------------------------- */
+.md-typeset h1 {
+  font-family: var(--sp-font-heading);
+  font-weight: 700;
+  color: var(--md-default-fg-color--dark);
+  margin: 1.5em 0 0.8em;
+  padding-bottom: 0.3em;
+  border-bottom: 2.25px solid #eaecef;
+  line-height: 1.25;
+  letter-spacing: 0.03em;
+  counter-reset: h2;
+}
+
+.md-typeset h2 {
+  font-family: var(--sp-font-heading);
   font-weight: 600;
+  margin: 1.8em 0 0.8em;
+  padding-bottom: 0.2em;
+  border-bottom: 2.25px solid #eaecef;
+  line-height: 1.25;
+  letter-spacing: 0.02em;
+  counter-reset: h3;
+}
+
+.md-typeset h3 {
+  font-family: var(--sp-font-heading);
+  font-weight: 600;
+  margin: 1.5em 0 0.5em;
+  border-bottom: 1px solid #eaecef;
+  line-height: 1.25;
+  counter-reset: h4;
+}
+
+.md-typeset h4,
+.md-typeset h5,
+.md-typeset h6 {
+  font-family: var(--sp-font-heading);
+  font-weight: 600;
+  margin: 1.2em 0 0.5em;
+  line-height: 1.25;
+}
+
+/* 标题自动编号（可选，适合技术白皮书） */
+.md-typeset h2::before {
+  counter-increment: h2;
+  content: counter(h2) ". ";
+  font-weight: 600;
+  color: var(--md-primary-fg-color);
+}
+
+.md-typeset h3::before {
+  counter-increment: h3;
+  content: counter(h2) "." counter(h3) " ";
+  font-weight: 600;
+  color: var(--md-default-fg-color--light);
+}
+
+/* 5. 列表样式 -------------------------------------------------------------- */
+.md-typeset ul,
+.md-typeset ol {
+  margin: 0.5em 0;
+  padding-left: 0.25em;
+}
+
+.md-typeset ul li,
+.md-typeset ol li {
+  margin: 0.5em 0;
+  line-height: 1.7;
+}
+
+.md-typeset ul ul,
+.md-typeset ol ul,
+.md-typeset ul ol,
+.md-typeset ol ol {
+  margin: 0.3em 0;
+}
+
+/* 6. 行内文本 -------------------------------------------------------------- */
+.md-typeset a {
+  color: var(--md-primary-fg-color);
+  text-decoration: none;
+  border-bottom: 1px dotted transparent;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  /* 改善中英文混排时链接的视觉效果 */
+  padding: 0 0.05em;
+}
+
+.md-typeset a:hover {
+  color: var(--md-accent-fg-color);
+  border-bottom-color: var(--md-primary-fg-color);
+  background-color: rgba(37, 99, 235, 0.05);
+}
+
+.md-typeset strong {
+  color: var(--blog-strong-color);
+  font-weight: 600;
+  /* 中文加粗时增加字距，避免笔画粘连 */
   letter-spacing: 0.02em;
 }
 
-/* 引用块样式 */
-.md-content blockquote {
-  border-left: 4px solid var(--md-primary-fg-color);
-  padding-left: 1rem;
-  color: var(--md-typeset-color);
-  background: var(--md-accent-fg-color--transparent);
-  padding: 0.5rem 1rem;
-  border-radius: 0 0.25rem 0.25rem 0;
+.md-typeset em {
+  font-style: normal;
+  color: var(--md-default-fg-color);
+  background: linear-gradient(transparent 60%, rgba(37, 99, 235, 0.15) 60%);
+  padding: 0 0.15em;
+  /* 斜体用下划线高亮替代，更适合中文 */
 }
 
-/* 表格优化 */
-.md-typeset table:not([class]) {
-  font-size: 0.9rem;
-  border-collapse: collapse;
+/* 7. 代码块 ---------------------------------------------------------------- */
+.md-typeset code {
+  font-family: var(--sp-font-mono);
+  background-color: var(--md-code-bg-color);
+  color: var(--md-accent-fg-color);
+  padding: 0.2em 0.45em;
+  border-radius: 4px;
+  font-size: 0.88em;
+  font-variant-ligatures: none;
+  font-weight: 500;
+  /* 改善中英文混排时的代码可读性 */
+  margin: 0 0.1em;
+  word-break: break-all;
 }
 
-.md-typeset table:not([class]) th {
-  background: var(--md-primary-fg-color);
-  color: white;
+.md-typeset pre {
+  font-family: var(--sp-font-mono);
+  line-height: 1.5;
+  border-radius: 6px;
+  margin: 1.5em 0;
+  padding: 1.2em;
+  background: var(--md-code-bg-color);
+  border: none;
+  overflow: auto;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  font-weight: 500;
+}
+
+.md-typeset pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  font-size: 0.8rem;
+}
+
+/* 8. 引用块 ---------------------------------------------------------------- */
+.md-typeset blockquote {
+  padding: 0.8em 1.2em;
+  margin: 1.5em 0;
+  border-left: 3px solid var(--blog-blockquote-border);
+  background-color: var(--blog-blockquote-bg);
+  border-radius: 0 4px 4px 0;
+  font-style: normal;
+}
+
+.md-typeset blockquote p {
+  margin: 0.5em 0;
+  color: var(--md-default-fg-color--light);
+}
+
+/* 9. 表格 ------------------------------------------------------------------ */
+.md-typeset .table-wrapper,
+.md-typeset div:has(> table:not([class])) {
+  overflow-x: auto;
+  display: flex;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 9.1 引文样式（脚注 -> 技术报告/IEEE 风格） ------------------------------- */
+/* 正文内引用显示为 [1] 形式 */
+.md-typeset a.footnote-ref {
+  font-size: 0.85em;
+  font-weight: 500;
+  vertical-align: baseline;
+  text-decoration: none;
+  color: var(--md-accent-fg-color);
+  padding: 0 0.05em;
+}
+
+.md-typeset a.footnote-ref::before { content: "["; }
+.md-typeset a.footnote-ref::after { content: "]"; }
+
+.md-typeset a.footnote-ref:hover {
+  text-decoration: underline;
+}
+
+/* 参考文献列表：隐藏默认分隔线，改为 [n] + “编号列/内容列”布局（更稳，避免段落换行错位） */
+.md-typeset .footnote hr {
+  display: none;
+}
+
+.md-typeset .footnote {
+  margin-top: 1.5em;
+}
+
+.md-typeset .footnote ol {
+  list-style: none;
+  padding-left: 0;
+  margin-left: 0;
+  counter-reset: sp-ref;
+}
+
+.md-typeset .footnote li {
+  counter-increment: sp-ref;
+  display: grid;
+  grid-template-columns: 2.2em 1fr;
+  column-gap: 0.3em;
+  align-items: start;
+  margin: 0.5em 0;
+}
+
+.md-typeset .footnote li::before {
+  content: "[" counter(sp-ref) "]";
   font-weight: 600;
+  color: var(--md-default-fg-color--light);
+  justify-self: start;
 }
 
-.md-typeset table:not([class]) td,
+/* footnote 内容（通常是 <p>）放到第二列，并避免默认段落边距把布局撑开 */
+.md-typeset .footnote li > * {
+  grid-column: 2;
+  margin: 0;
+}
+
+.md-typeset .footnote li > * + * {
+  margin-top: 0.4em;
+}
+
+/* footnote 回跳箭头弱化 */
+.md-typeset .footnote a.footnote-backref {
+  text-decoration: none;
+  opacity: 0.6;
+}
+
+.md-typeset .footnote a.footnote-backref:hover {
+  opacity: 1;
+}
+
+.md-typeset table:not([class]) {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  border-radius: 6px;
+  border-collapse: collapse;
+  display: table;
+  width: auto;
+  max-width: 100%;
+  margin: 1.5em auto;
+  font-size: 0.75rem;
+  overflow: hidden;
+}
+
 .md-typeset table:not([class]) th {
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--md-typeset-table-color);
+  background-color: var(--md-primary-fg-color);
+  color: #fff;
+  font-weight: 600;
+  padding: 0.75em 1em;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  white-space: nowrap;
 }
 
-/* 代码块优化 */
-.md-typeset pre > code {
-  font-size: 0.85rem;
+.md-typeset table:not([class]) td {
+  padding: 0.65em 1em;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  vertical-align: top;
+}
+
+.md-typeset table:not([class]) tr:nth-child(2n) {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.md-typeset table:not([class]) tbody tr:hover {
+  background-color: rgba(37, 99, 235, 0.04);
+}
+
+/* small 标签样式（表格注释） */
+.md-typeset small {
+  display: block;
+  color: var(--md-default-fg-color--light);
+  font-size: 0.78rem;
   line-height: 1.6;
+  margin: 0.5em 0 1.5em;
+  letter-spacing: 0.01em;
 }
 
-/* 导航栏 tabs 优化 */
+/* 10. 媒体资源 ------------------------------------------------------------- */
+.md-typeset img {
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  margin: 1.5em auto;
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.md-typeset .mermaid {
+  display: flex;
+  justify-content: center;
+  margin: 1.5em auto;
+  overflow-x: auto;
+  padding: 0.5em 0;
+}
+
+.md-typeset .mermaid svg {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  height: auto;
+}
+
+/* 11. 提示框 --------------------------------------------------------------- */
+.md-typeset .admonition {
+  border-radius: 6px;
+  border-left-width: 4px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  margin: 1.5em 0;
+}
+
+.md-typeset .admonition-title {
+  font-weight: 600;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* 12. 导航栏 --------------------------------------------------------------- */
+.md-nav {
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
 .md-tabs__link {
   font-weight: 500;
   letter-spacing: 0.02em;
 }
 
-/* 卡片网格样式 */
+/* 侧边栏分类标题样式增强 */
+.md-nav--primary .md-nav__item--nested > .md-nav__link {
+  font-weight: 600;
+  color: var(--md-primary-fg-color);
+  font-size: 0.72rem;
+  padding: 0.6em 0.6em;
+  margin-top: 0.6em;
+}
+
+[data-md-color-scheme="slate"] .md-nav--primary .md-nav__item--nested > .md-nav__link {
+  color: var(--md-accent-fg-color);
+}
+
+/* 分类下的页面链接样式 */
+.md-nav--primary .md-nav__item--nested .md-nav__item:not(.md-nav__item--nested) > .md-nav__link {
+  font-weight: 400;
+  font-size: 0.68rem;
+  padding-left: 0.8em;
+  color: var(--md-default-fg-color--light);
+}
+
+.md-nav--primary .md-nav__item--nested .md-nav__item:not(.md-nav__item--nested) > .md-nav__link::before {
+  content: "•";
+  margin-right: 0.5em;
+  color: var(--md-default-fg-color--lighter);
+}
+
+.md-nav--primary .md-nav__item--nested .md-nav__item:not(.md-nav__item--nested) > .md-nav__link--active {
+  color: var(--md-accent-fg-color);
+  font-weight: 500;
+}
+
+.md-nav--primary .md-nav__item--nested .md-nav__item:not(.md-nav__item--nested) > .md-nav__link--active::before {
+  color: var(--md-accent-fg-color);
+}
+
+/* 13. 卡片样式 ------------------------------------------------------------- */
 .grid.cards > ul > li {
   border: 1px solid var(--md-typeset-table-color);
   border-radius: 0.5rem;
@@ -97,13 +496,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* Admonition 优化 */
-.md-typeset .admonition,
-.md-typeset details {
-  border-radius: 0.375rem;
-}
-
-/* 滚动条美化 */
+/* 14. 滚动条 --------------------------------------------------------------- */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -122,10 +515,105 @@
   background: var(--md-primary-fg-color--light);
 }
 
-/* 移动端优化 */
+/* 15. 深色模式适配 --------------------------------------------------------- */
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) tr:nth-child(2n) {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) tbody tr:hover {
+  background-color: rgba(96, 165, 250, 0.08);
+}
+
+[data-md-color-scheme="slate"] .md-typeset small {
+  color: var(--md-default-fg-color--lighter);
+}
+
+[data-md-color-scheme="slate"] .md-typeset em {
+  background: linear-gradient(transparent 60%, rgba(96, 165, 250, 0.2) 60%);
+}
+
+/* 16. 移动端优化 ----------------------------------------------------------- */
 @media screen and (max-width: 76.1875em) {
-  .md-content {
-    padding: 1rem;
+  .md-typeset {
+    font-size: 0.85rem;
+    letter-spacing: 0.005em;
+  }
+
+  /* 移动端：中文两端对齐更容易出现"字距被拉伸"的观感，改为左对齐更稳 */
+  .md-typeset p {
+    text-align: left;
+    text-justify: auto;
+  }
+  
+  .md-typeset table:not([class]) {
+    font-size: 0.7rem;
+  }
+  
+  .md-typeset table:not([class]) th,
+  .md-typeset table:not([class]) td {
+    padding: 0.5em 0.75em;
+  }
+  
+  /* 移动端禁用标题自动编号 */
+  .md-typeset h2::before,
+  .md-typeset h3::before {
+    content: none;
   }
 }
 
+/* 17. 中文排版微调 --------------------------------------------------------- */
+/* 优化中英文混排时的间距 */
+.md-typeset {
+  font-feature-settings: "halt" 1, "vhal" 1, "kern" 1;
+  -webkit-font-feature-settings: "halt" 1, "vhal" 1, "kern" 1;
+}
+
+/* 标点挤压：避免行首行尾出现全角标点导致的视觉不齐 */
+.md-typeset p,
+.md-typeset li {
+  text-indent: 0;
+  /* Safari 支持 */
+  -webkit-text-emphasis-position: under right;
+  text-emphasis-position: under right;
+}
+
+/* 改善数字与中文的混排效果 */
+.md-typeset {
+  font-variant-numeric: proportional-nums;
+}
+
+/* 长英文单词在表格中的换行优化 */
+.md-typeset table:not([class]) td {
+  word-break: normal;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+
+/* 18. 打印样式 ------------------------------------------------------------- */
+@media print {
+  .md-typeset {
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #000;
+  }
+  
+  .md-typeset h1,
+  .md-typeset h2,
+  .md-typeset h3 {
+    page-break-after: avoid;
+    color: #000;
+  }
+  
+  .md-typeset table,
+  .md-typeset pre,
+  .md-typeset img {
+    page-break-inside: avoid;
+  }
+  
+  /* 打印时显示链接URL */
+  .md-typeset a[href^="http"]:after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666;
+  }
+}
