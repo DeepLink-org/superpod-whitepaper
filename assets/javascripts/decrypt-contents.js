@@ -91,14 +91,14 @@ async function decrypt_key_from_bundle(password, ciphertext_bundle, username) {
             if (parts.length == 3) {
                 keys = await decrypt_key(pass, parts[0], parts[1], parts[2]);
                 if (keys) {
-                    setCredentials(null, pass);
+                    
                     return keys;
                 }
             } else if (parts.length == 4 && username) {
                 if (parts[3] == userhash) {
                     keys = await decrypt_key(pass, parts[0], parts[1], parts[2]);
                     if (keys) {
-                        setCredentials(user, pass);
+                        
                         return keys;
                     }
                 }
@@ -165,31 +165,6 @@ async function delItemName(key) {
 async function getItemName(key) {
     return sessionStorage.getItem(key);
 };
-/* save username/password to sessionStorage/localStorage */
-async function setCredentials(username, password) {
-    sessionStorage.setItem('encryptcontent_credentials', JSON.stringify({'user': username, 'password': password}));
-}
-
-/* try to get username/password from sessionStorage/localStorage */
-async function getCredentials(username_input, password_input) {
-    const credentials = JSON.parse(sessionStorage.getItem('encryptcontent_credentials'));
-    if (credentials && !encryptcontent_obfuscate) {
-        if (credentials['user'] && username_input) {
-            username_input.value = decodeURIComponent(credentials['user']);
-        }
-        if (credentials['password']) {
-            password_input.value = decodeURIComponent(credentials['password']);
-        }
-        return true;
-    } else {
-        return false;
-    }
-}
-
-/*remove username/password from localStorage */
-async function delCredentials() {
-    sessionStorage.removeItem('encryptcontent_credentials');
-}
 
 /* Reload scripts src after decryption process */
 async function reload_js(src) {
@@ -319,7 +294,10 @@ async function decryptor_reaction(key_or_keys, password_input, decrypted_content
         }
         // any post processing on the decrypted content should be done here
         document$.next(document);
-        
+        let reload_scripts = ['javascripts/charts.js'];
+        for (let i = 0; i < reload_scripts.length; i++) { 
+            await reload_js(reload_scripts[i]);
+        }
         if (typeof theme_run_after_decryption !== 'undefined') {
             theme_run_after_decryption();
         }
@@ -361,42 +339,16 @@ async function init_decryptor() {
         content_decrypted = await decrypt_action(
             username_input, password_input, encrypted_content, decrypted_content, key_from_storage
         );
-        /* try to get username/password from sessionStorage */
-        if (content_decrypted === false) {
-            let got_credentials = await getCredentials(username_input, password_input);
-            if (got_credentials) {
-                content_decrypted = await decrypt_action(
-                    username_input, password_input, encrypted_content, decrypted_content
-                );
-            }
-        }
+        
         decryptor_reaction(content_decrypted, password_input, decrypted_content, true);
     }
-        else {
-        let got_credentials = await getCredentials(username_input, password_input);
-        if (got_credentials) {
-            content_decrypted = await decrypt_action(
-                username_input, password_input, encrypted_content, decrypted_content
-            );
-            decryptor_reaction(content_decrypted, password_input, decrypted_content, true);
-        }
-    }
+        
     if (!content_decrypted) {
         //If nothing got decrypted, still dispatch encryptcontent_event
         encryptcontent_done = true;
         window.dispatchEvent(encryptcontent_event);
     }
-    /* If password_button is set, try decrypt content when button is press */
-    let decrypt_button = document.getElementById("mkdocs-decrypt-button");
-    if (decrypt_button) {
-        decrypt_button.onclick = async function(event) {
-            event.preventDefault();
-            content_decrypted = await decrypt_action(
-                username_input, password_input, encrypted_content, decrypted_content
-            );
-            decryptor_reaction(content_decrypted, password_input, decrypted_content);
-        };
-    }
+    
     /* Default, try decrypt content when key enter is press */
     password_input.addEventListener('keypress', async function(event) {
         if (event.key === "Enter") {
