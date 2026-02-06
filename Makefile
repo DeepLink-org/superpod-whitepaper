@@ -22,7 +22,7 @@ install:
 serve:
 	@echo "正在启动实时预览服务器..."
 	@echo "请在浏览器中打开 http://127.0.0.1:8000"
-	mkdocs serve --dev-addr 0.0.0.0:8000
+	mkdocs serve -w src -w mkdocs.yml --dev-addr 127.0.0.1:8000
 
 # Build static site
 build:
