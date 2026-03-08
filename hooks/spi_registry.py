@@ -21,5 +21,10 @@ def on_pre_build(config, **kwargs):
     generate = _load_generate()
 
     output_file = ROOT / "src" / "07-spi-registry.md"
-    output_file.write_text(generate(), encoding="utf-8")
-    print(f"[SPI] Generated {output_file.relative_to(ROOT)}")
+    new_content = generate()
+    old_content = output_file.read_text(encoding="utf-8") if output_file.exists() else ""
+    if new_content != old_content:
+        output_file.write_text(new_content, encoding="utf-8")
+        print(f"[SPI] Generated {output_file.relative_to(ROOT)}")
+    else:
+        print(f"[SPI] {output_file.relative_to(ROOT)} unchanged, skipped write")
