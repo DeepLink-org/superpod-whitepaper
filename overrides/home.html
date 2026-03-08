@@ -4,209 +4,518 @@
   {{ super() }}
 
   <style>
-    /* Prevent horizontal overflow */
-    body {
-      overflow-x: hidden;
+    body { overflow-x: hidden; }
+    .md-content { display: none; }
+    @media screen and (min-width: 60em)   { .md-sidebar--secondary { display: none; } }
+    @media screen and (min-width: 76.25em) { .md-sidebar--primary   { display: none; } }
+    .md-header { position: initial; }
+    .md-main__inner { margin: 0; }
+
+    /* ── Hero: 白皮书封面风格 ────────────────────────────── */
+    .sp-hero {
+      min-height: 92vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #fff;
+      background: linear-gradient(170deg, #041733 0%, #0b2f6b 40%, #122e5e 75%, #061a3a 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .sp-hero::before {
+      content: "";
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 25% 35%, rgba(30,64,175,.12) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 75% 65%, rgba(37,99,235,.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .sp-hero::after {
+      content: "";
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px);
+      background-size: 72px 72px;
+      pointer-events: none;
     }
 
-    /* Hide main content for home page */
-    .md-content {
-      display: none;
+    .sp-hero-inner {
+      position: relative; z-index: 1;
+      max-width: 860px;
+      padding: 48px 24px;
     }
 
-    /* Hide table of contents */
-    @media screen and (min-width: 60em) {
-      .md-sidebar--secondary {
-        display: none;
-      }
+    /* 机构标识 */
+    .sp-hero-badge {
+      display: inline-block;
+      font-size: .8rem;
+      font-weight: 500;
+      letter-spacing: .18em;
+      color: rgba(255,255,255,.6);
+      border: 1px solid rgba(255,255,255,.18);
+      padding: 6px 20px;
+      border-radius: 2px;
+      margin-bottom: 36px;
+      text-transform: uppercase;
     }
 
-    /* Hide navigation */
-    @media screen and (min-width: 76.25em) {
-      .md-sidebar--primary {
-        display: none;
-      }
+    .sp-hero-title {
+      font-family: var(--sp-font-heading);
+      font-weight: 700;
+      font-size: 2.8rem;
+      line-height: 1.3;
+      letter-spacing: .06em;
+      margin: 0 0 12px;
+      color: #fff;
+    }
+    .sp-hero-title span {
+      display: block;
+      font-size: 1.15rem;
+      font-weight: 400;
+      letter-spacing: .12em;
+      color: rgba(255,255,255,.7);
+      margin-top: 10px;
     }
 
-    /* Make header static */
-    .md-header {
-      position: initial;
+    .sp-hero-meta {
+      font-size: .78rem;
+      letter-spacing: .08em;
+      color: rgba(255,255,255,.45);
+      margin-top: 14px;
     }
 
-    .md-main__inner {
+    .sp-hero-rule {
+      width: 64px;
+      border: none;
+      border-top: 2px solid rgba(196,166,108,.6);
+      margin: 32px auto;
+    }
+
+    .sp-hero-thesis {
+      font-family: var(--sp-font-body);
+      font-size: 1.05rem;
+      line-height: 2;
+      color: rgba(255,255,255,.78);
+      max-width: 640px;
+      margin: 0 auto 40px;
+    }
+
+    .sp-hero-actions {
+      list-style: none;
+      padding: 0; margin: 0;
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .sp-hero-actions a {
+      display: inline-block;
+      padding: 13px 36px;
+      font-size: .92rem;
+      font-weight: 600;
+      border-radius: 4px;
+      transition: all .25s ease;
+      text-decoration: none;
+    }
+    .sp-hero-actions .sp-btn-primary {
+      background: rgba(255,255,255,.95);
+      color: #0b2f6b;
+    }
+    .sp-hero-actions .sp-btn-primary:hover {
+      background: #fff;
+      box-shadow: 0 6px 20px rgba(255,255,255,.25);
+      transform: translateY(-2px);
+    }
+    .sp-hero-actions .sp-btn-ghost {
+      background: transparent;
+      color: rgba(255,255,255,.85);
+      border: 1px solid rgba(255,255,255,.28);
+    }
+    .sp-hero-actions .sp-btn-ghost:hover {
+      border-color: rgba(255,255,255,.55);
+      color: #fff;
+      transform: translateY(-2px);
+    }
+
+    /* ── 核心论点 ────────────────────────────────────── */
+    .sp-thesis {
+      padding: 96px 0;
+      background: var(--md-default-bg-color);
+      border-bottom: 1px solid var(--md-typeset-table-color);
+    }
+    .sp-thesis-inner {
+      max-width: 780px;
+      margin: 0 auto;
+    }
+    .sp-thesis h2 {
+      font-family: var(--sp-font-heading);
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--md-primary-fg-color);
+      text-align: center;
+      margin: 0 0 40px;
+      letter-spacing: .04em;
+    }
+    .sp-thesis-text {
+      font-size: 1.05rem;
+      line-height: 2;
+      color: var(--md-typeset-color);
+      text-align: justify;
+      margin-bottom: 36px;
+    }
+
+    .sp-chain {
+      border: 1px solid var(--md-typeset-table-color);
+      border-left: 4px solid var(--md-primary-fg-color);
+      border-radius: 0 6px 6px 0;
+      padding: 28px 32px;
+      margin: 0 0 36px;
+      font-size: 1rem;
+      line-height: 2;
+      color: var(--md-typeset-color);
+      background: rgba(11,47,107,.025);
+    }
+    .sp-chain strong {
+      color: var(--md-primary-fg-color);
+      font-weight: 600;
+    }
+
+    /* ── 全书结构 ────────────────────────────────────── */
+    .sp-chapters {
+      padding: 96px 0;
+      background: rgba(128,128,128,.02);
+    }
+    .sp-chapters h2 {
+      font-family: var(--sp-font-heading);
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--md-primary-fg-color);
+      text-align: center;
+      margin: 0 0 8px;
+      letter-spacing: .04em;
+    }
+    .sp-chapters > .container > p.sp-chapters-sub {
+      text-align: center;
+      font-size: .95rem;
+      color: var(--md-typeset-color);
+      opacity: .7;
+      margin: 0 auto 48px;
+    }
+
+    .sp-layer-label {
+      font-family: var(--sp-font-heading);
+      font-size: .82rem;
+      font-weight: 600;
+      letter-spacing: .14em;
+      color: var(--md-primary-fg-color);
+      opacity: .65;
+      text-align: center;
+      text-transform: uppercase;
+      margin: 48px 0 18px;
+      position: relative;
+    }
+    .sp-layer-label:first-of-type { margin-top: 0; }
+    .sp-layer-label::before,
+    .sp-layer-label::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 80px;
+      border-top: 1px solid var(--md-typeset-table-color);
+    }
+    .sp-layer-label::before { right: calc(50% + 180px); }
+    .sp-layer-label::after  { left:  calc(50% + 180px); }
+
+    .sp-ch-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      max-width: 1060px;
+      margin: 0 auto;
+    }
+    .sp-ch-grid-2 {
+      grid-template-columns: repeat(2, 1fr);
+      max-width: 710px;
+    }
+    .sp-ch-card {
+      display: block;
+      text-decoration: none;
+      background: var(--md-default-bg-color);
+      border: 1px solid var(--md-typeset-table-color);
+      border-radius: 8px;
+      padding: 28px 24px;
+      transition: all .25s ease;
+    }
+    .sp-ch-card:hover {
+      border-color: var(--md-primary-fg-color);
+      box-shadow: 0 8px 24px rgba(0,0,0,.06);
+      transform: translateY(-3px);
+    }
+    .sp-ch-num {
+      font-family: var(--sp-font-heading);
+      font-size: .7rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      color: var(--md-primary-fg-color);
+      opacity: .7;
+      margin-bottom: 8px;
+    }
+    .sp-ch-card h3 {
+      font-family: var(--sp-font-heading);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--md-typeset-color);
+      margin: 0 0 8px;
+      line-height: 1.4;
+    }
+    .sp-ch-card p {
+      font-size: .85rem;
+      line-height: 1.75;
+      color: var(--md-typeset-color);
+      opacity: .75;
       margin: 0;
     }
 
-    /* Style links */
-    .superpod-feature-section .md-button,
-    .superpod-intro-section .md-button:not(.md-button--primary) {
-      background-color: transparent;
+    /* ── 收尾声明 ────────────────────────────────────── */
+    .sp-closing {
+      padding: 80px 0;
+      background: var(--md-default-bg-color);
+      border-bottom: 1px solid var(--md-typeset-table-color);
+    }
+    .sp-closing-inner {
+      max-width: 720px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .sp-closing-inner p {
+      font-size: 1rem;
+      line-height: 2;
+      color: var(--md-typeset-color);
+      opacity: .85;
+    }
+    .sp-closing-verdict {
+      margin-top: 28px;
+      font-size: 1.05rem;
+      font-weight: 500;
       color: var(--md-primary-fg-color);
+      line-height: 2;
+    }
+    .sp-closing-links {
+      margin-top: 32px;
+      font-size: .88rem;
+      color: var(--md-typeset-color);
+      opacity: .7;
+    }
+    .sp-closing-links a {
+      color: var(--md-primary-fg-color);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .sp-closing-links a:hover {
       text-decoration: underline;
-      border: none;
-      box-shadow: none;
     }
 
-    .superpod-feature-section .md-button:hover,
-    .superpod-intro-section .md-button:not(.md-button--primary):hover {
-      background-color: transparent;
-      color: var(--md-accent-fg-color);
-      text-decoration: underline;
+    /* ── 参与单位分组标题 ───────────────────────────── */
+    .sp-partner-group-title {
+      font-family: var(--sp-font-heading);
+      font-size: .85rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      color: var(--md-typeset-color);
+      opacity: .55;
+      text-align: center;
+      margin: 0 0 20px;
+      text-transform: uppercase;
+    }
+    .sp-partner-group-title + .partners-single {
+      margin-bottom: 48px;
+    }
+
+    /* ── Responsive ──────────────────────────────────── */
+    @media (max-width: 960px) {
+      .sp-ch-grid { grid-template-columns: repeat(2, 1fr); }
+      .sp-hero-title { font-size: 2.2rem; }
+    }
+    @media (max-width: 600px) {
+      .sp-ch-grid { grid-template-columns: 1fr; }
+      .sp-hero-title { font-size: 1.7rem; }
+      .sp-hero-title span { font-size: 1rem; }
+      .sp-hero-badge { font-size: .7rem; padding: 5px 14px; }
+      .sp-hero-actions { flex-direction: column; align-items: center; }
+      .sp-hero-actions a { width: 80%; text-align: center; }
+      .sp-thesis, .sp-chapters { padding: 64px 0; }
+      .sp-chain { padding: 20px 18px; }
     }
   </style>
 
-  <!-- Hero Section -->
-  <section class="mdx-container">
+  <!-- ═══════════════ Hero: 白皮书封面 ═══════════════ -->
+  <section class="sp-hero">
+    <div class="sp-hero-inner">
+
+      <div class="sp-hero-badge">上海人工智能实验室 · 联合学术界与产业界共同编著</div>
+
+      <h1 class="sp-hero-title">
+        超节点技术体系白皮书
+        <span>SuperPod Technical White Paper</span>
+      </h1>
+
+      <div class="sp-hero-meta">v1.0 · 2026 年 3 月发布 · 联合 8 所高校及科研机构、13 家产业伙伴共同编著</div>
+
+      <hr class="sp-hero-rule" />
+
+      <p class="sp-hero-thesis">
+        当算力需求以指数速度增长，单芯片的进步已远远不够。超节点的本质是一场<strong style="color:#fff">极致的系统工程</strong>——在芯片、互联、封装、软件和散热的多维约束下，持续将系统级性能边界向外推移。本白皮书系统性提出<strong style="color:#fff">帕累托前沿外推</strong>分析框架，将超节点竞争从单一指标比拼升维为系统级多目标优化问题，为 AI 基础设施的技术选型与路线规划提供可量化的分析坐标系。
+      </p>
+
+      <div class="sp-hero-actions">
+        <a href="00-executive-summary/" class="sp-btn-primary">执行摘要</a>
+        <a href="01-architecture/" class="sp-btn-ghost">开始阅读</a>
+        <a href="04-reference-designs/" class="sp-btn-ghost">参考设计</a>
+        <a href="07-spi/" class="sp-btn-ghost">SPI 指数</a>
+        <a href="https://github.com/DeepLink-org/superpod-whitepaper" class="sp-btn-ghost" target="_blank" rel="noopener">GitHub</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════ 核心论点 ═══════════════ -->
+  <section class="sp-thesis">
     <div class="container">
-      <div class="intro-message">
-        <div class="hero-content">
-          <h1>SuperPod</h1>
-          <p class="hero-subtitle">超节点技术白皮书</p>
-        </div>
-        <h3>面向大模型的 AI 超算互联架构</h3>
-        <hr class="intro-divider" />
-        <p class="hero-description">
-          从硬件互联、拓扑设计到软件编程模型，系统梳理超节点架构的技术演进
+      <div class="sp-thesis-inner">
+        <h2>核心论点</h2>
+
+        <p class="sp-thesis-text">
+          从 GPT-3（2020）到 Grok-3（2025），前沿模型的训练算力需求在五年内增长了三个数量级。同一时期，AI for Science 正将科研过程本身推向指数级 Scaling。无论模型训练还是科学计算，都在向算力基础设施提出同一个要求——以指数速度持续扩展。
         </p>
-        <ul class="list-inline">
-          <li>
-            <a href="01-architecture/" class="md-button md-button--primary">开始阅读</a>
-          </li>
-          <li>
-            <a href="04-reference-designs/" class="md-button">参考设计</a>
-          </li>
-          <li>
-            <a href="https://github.com/DeepLink-org/superpod-whitepaper" class="md-button" target="_blank" rel="noopener">GitHub</a>
-          </li>
-        </ul>
+
+        <p class="sp-thesis-text">
+          但单芯片的制程红利每两年只能提供约 2.5 倍增长，而国际领先平台实际做到了每两年 5–6 倍的系统级算力跃升。这个超出制程能解释的系统级增速从何而来？
+        </p>
+
+        <div class="sp-chain">
+          <strong>需求侧指数增长不可逆转</strong> →
+          <strong>供给侧增速远超制程红利</strong> →
+          <strong>帕累托前沿外推</strong>是背后的统一机制 →
+          <strong>超节点</strong>是使这种外推在机柜尺度成为可能的工程形态
+        </div>
+
+        <p class="sp-thesis-text">
+          在面积墙、能耗墙和带宽墙的多维物理约束下，每一代架构师持续引入新的设计变量——从 Tensor Core 到 NVSwitch，从 NV-HBI 到 NVL72 铜缆背板——将系统级性能边界整体向外推移。本白皮书将这种机制称为帕累托前沿外推，并以此作为贯穿全书的统一分析框架。
+        </p>
       </div>
     </div>
   </section>
 
-  <!-- What is SuperPod Section -->
-  <section class="superpod-intro-section">
+  <!-- ═══════════════ 全书结构 ═══════════════ -->
+  <section class="sp-chapters">
     <div class="container">
-      <div class="superpod-intro-content">
-        <h2>什么是 SuperPod？</h2>
+      <h2>全书结构</h2>
+      <p class="sp-chapters-sub">全书按「证明 — 决策 — 机制」三层结构组织，从认知到判断到执行形成完整闭环</p>
+
+      <!-- ── 证明层 ── -->
+      <div class="sp-layer-label">证明层 · 超节点为何成立，核心约束是什么</div>
+      <div class="sp-ch-grid">
+        <a href="01-architecture/" class="sp-ch-card">
+          <div class="sp-ch-num">第一章</div>
+          <h3>架构分析 · 定义前沿</h3>
+          <p>从需求侧的双重指数增长出发，解释系统级"2 年 5–6 倍"增速的机制，建立帕累托前沿外推的分析框架，逐层拆解产品实践、电气接口、互联协议、网络拓扑与整机工程。</p>
+        </a>
+        <a href="02-software/" class="sp-ch-card">
+          <div class="sp-ch-num">第二章</div>
+          <h3>软件系统 · 兑现前沿</h3>
+          <p>硬件前沿外推只打开可能性空间。统一寻址、通信运行时、RAS 与训推工程决定这些可能性能否被稳定兑现为 Goodput。</p>
+        </a>
+        <a href="03-simulation/" class="sp-ch-card">
+          <div class="sp-ch-num">第三章</div>
+          <h3>建模仿真 · 度量前沿</h3>
+          <p>当设计空间多维且耦合，仿真是量化帕累托位置、区分"沿前沿移动"与"真正推移前沿"的决策工具。</p>
+        </a>
+      </div>
+
+      <!-- ── 决策层 ── -->
+      <div class="sp-layer-label">决策层 · 今天怎么选，未来怎么押注</div>
+      <div class="sp-ch-grid">
+        <a href="04-reference-designs/" class="sp-ch-card">
+          <div class="sp-ch-num">第四章</div>
+          <h3>参考设计 · 选择前沿上的点</h3>
+          <p>五个参考设计对应帕累托前沿上五个不可支配的位置——从以太网生态兼容到总线级内存语义，从 Dragonfly 组间弹性到 Torus 全拓扑重构。</p>
+        </a>
+        <a href="05-future/" class="sp-ch-card">
+          <div class="sp-ch-num">第五章</div>
+          <h3>未来演进 · 预判前沿变化</h3>
+          <p>光互联、先进封装、Chiplet、HBM/3D DRAM 与模型形态演进将改写帕累托前沿的维度与形状。</p>
+        </a>
+        <a href="06-conclusion/" class="sp-ch-card">
+          <div class="sp-ch-num">第六章</div>
+          <h3>总结 · 回收判断</h3>
+          <p>持续进行系统级帕累托前沿外推的能力，就是超节点竞争的本质。</p>
+        </a>
+      </div>
+
+      <!-- ── 机制层 ── -->
+      <div class="sp-layer-label">机制层 · 从白皮书到持续运行的评估与协作框架</div>
+      <div class="sp-ch-grid sp-ch-grid-2">
+        <a href="07-spi/" class="sp-ch-card">
+          <div class="sp-ch-num">SPI</div>
+          <h3>SuperPod Pareto Index</h3>
+          <p>将帕累托七维度框架转化为开放式产品评估机制。厂商提交产品数据，编写委员会依据统一框架进行独立评分——白皮书定义"怎么看"，SPI 回答"现在在哪"。</p>
+        </a>
+        <a href="08-ecosystem-map/" class="sp-ch-card">
+          <div class="sp-ch-num">产业生态</div>
+          <h3>产业生态地图</h3>
+          <p>超节点不是单点产品竞争，而是跨芯片、互联、封装、软件与运营的协同工程。生态地图识别关键环节、短板位置与优先投入方向。</p>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════ 收尾声明 ═══════════════ -->
+  <section class="sp-closing">
+    <div class="container">
+      <div class="sp-closing-inner">
         <p>
-          SuperPod（超节点）是一种面向大规模 AI 训练和推理的高性能计算架构。
-          它通过高带宽域（HBD）作为 Scale-Up 域，区别于仅依赖 RDMA 的 Scale-Out 设计，
-          实现了从 Volta/HGX 到 Blackwell/GB200 的算力、互联与封装协同演进。
+          本白皮书由上海人工智能实验室牵头，联合国内高校与产业伙伴共同编写。全书力图在开放、中立的技术立场上，为超节点领域提供一份系统性的技术参考。
         </p>
-        <a href="01-architecture/" class="md-button md-button--primary">了解更多</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Feature 1: Architecture -->
-  <section class="superpod-feature-section">
-    <div class="container">
-      <div class="superpod-feature-content">
-        <div class="superpod-feature-icon">
-          <span class="twemoji">🏗️</span>
-        </div>
-        <div class="superpod-feature-text">
-          <h2>系统架构</h2>
-          <p>
-            深入分析国内外先进算力实践，涵盖 NVLink/NVSwitch、CEI SerDes、
-            数据中心交换 ASIC 等关键技术。详细对比 Dragonfly、SlimFly、Torus 等拓扑策略，
-            为超节点架构设计提供全面的技术参考。
-          </p>
-          <a href="01-architecture/" class="md-button">详细了解 →</a>
+        <p class="sp-closing-verdict">
+          一个超节点方案的最终度量标准，不是峰值带宽或理论算力，而是它在真实负载和运行环境下能够稳定交付的有效算力——Goodput。
+        </p>
+        <div class="sp-closing-links">
+          <a href="00-executive-summary/">执行摘要</a> ·
+          <a href="00-editorial-board/">编写委员会</a> ·
+          <a href="07-spi/">SPI 指数</a> ·
+          <a href="00-version-history/">版本历史与引用方式</a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Feature 2: Software -->
-  <section class="superpod-feature-section reverse">
-    <div class="container">
-      <div class="superpod-feature-content">
-        <div class="superpod-feature-icon">
-          <span class="twemoji">💻</span>
-        </div>
-        <div class="superpod-feature-text">
-          <h2>软件系统</h2>
-          <p>
-            探讨 PGAS + 单边通信模型对 MoE/非均匀负载的收益，
-            涵盖内存语义、高性能通信库、RAS 可靠性以及训练/推理系统的设计与优化。
-            给出可落地的技术路线和实现方案。
-          </p>
-          <a href="02-software/" class="md-button">详细了解 →</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Feature 3: Simulation -->
-  <section class="superpod-feature-section">
-    <div class="container">
-      <div class="superpod-feature-content">
-        <div class="superpod-feature-icon">
-          <span class="twemoji">📊</span>
-        </div>
-        <div class="superpod-feature-text">
-          <h2>建模仿真</h2>
-          <p>
-            构建仿真云服务平台（Simulation-as-a-Service），
-            提供在线评测服务，支持软硬件协同演进的快速验证。
-            帮助设计团队在实际部署前进行性能预测和优化迭代。
-          </p>
-          <a href="03-simulation/" class="md-button">详细了解 →</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Feature 4: Reference Designs -->
-  <section class="superpod-feature-section reverse">
-    <div class="container">
-      <div class="superpod-feature-content">
-        <div class="superpod-feature-icon">
-          <span class="twemoji">📐</span>
-        </div>
-        <div class="superpod-feature-text">
-          <h2>参考设计</h2>
-          <p>
-            提供多形态参考设计方案，包括标准以太网方案、标准总线方案、
-            Dragonfly OCS、Torus OCS 等多种拓扑实现。
-            每种方案都附有详细的技术规格和部署指南。
-          </p>
-          <a href="04-reference-designs/" class="md-button">详细了解 →</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Feature 5: Future -->
-  <section class="superpod-feature-section">
-    <div class="container">
-      <div class="superpod-feature-content">
-        <div class="superpod-feature-icon">
-          <span class="twemoji">🚀</span>
-        </div>
-        <div class="superpod-feature-text">
-          <h2>未来演进</h2>
-          <p>
-            展望光互联与先进封装技术的发展方向，
-            探讨 Chiplet、硅光集成等新兴技术对超节点架构的影响。
-            为下一代超节点架构提供技术前瞻和演进路径。
-          </p>
-          <a href="05-future/" class="md-button">详细了解 →</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 参与单位 Section -->
+  <!-- ═══════════════ 参与单位 ═══════════════ -->
   <section class="superpod-partners-section">
     <div class="container">
       <h2>参与单位</h2>
+
+      <h3 class="sp-partner-group-title">科研机构与高校</h3>
       <div class="partners-single">
         {% for partner in config.extra.partners %}
+        {% if partner.type == "institution" %}
         <div class="partner-card {% if loop.first %}main{% endif %}">
           <div class="partner-name">{{ partner.name }}</div>
         </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+
+      <h3 class="sp-partner-group-title">产业伙伴</h3>
+      <div class="partners-single">
+        {% for partner in config.extra.partners %}
+        {% if partner.type == "company" %}
+        <div class="partner-card">
+          <div class="partner-name">{{ partner.name }}</div>
+        </div>
+        {% endif %}
         {% endfor %}
       </div>
     </div>
@@ -218,4 +527,3 @@
 {% block footer %}
   {{ super() }}
 {% endblock %}
-

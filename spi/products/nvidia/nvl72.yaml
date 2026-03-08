@@ -1,0 +1,171 @@
+# Example entry for SPI.
+# This file is maintained by the repository as a reference example and is
+# based on public information. It does not imply an official NVIDIA submission.
+
+meta:
+  product_id: nvl72
+  vendor_id: nvidia
+  product_name: NVIDIA NVL72
+  version: v1.0
+  submission_date: 2026-03-08
+  submission_type: committee_init
+  status: published
+
+vendor_submission:
+  contacts:
+    company_name: NVIDIA
+    primary_contact_name: ""
+    primary_contact_email: ""
+    github_handle: ""
+
+  product_summary:
+    category: standard
+    short_description: >
+      NVIDIA NVL72 is a rack-scale high-bandwidth domain built around the
+      Blackwell generation. It uses 36 GB200 superchips to form a 72-GPU
+      NVLink domain and represents the current industrial benchmark for
+      vertically integrated SuperPod engineering.
+    release_stage: announced
+
+  spec:
+    accelerator:
+      vendor: NVIDIA
+      model: GB200 / B200
+      accelerator_count_per_hbd: 72
+      memory_capacity_per_accelerator_gb: 192
+      total_hbd_memory_gb: 13824
+    interconnect:
+      topology: fixed NVSwitch fabric
+      fabric_type: NVLink 5.0 + NVSwitch 4.0
+      switch_type: NVSwitch Gen4 72-port
+      stated_bisection_bandwidth_tbps: 130
+      stated_per_accelerator_bandwidth_gbps: 14400
+      stated_single_hop_latency_ns: 100
+    scale:
+      max_hbd_size: 72
+      scale_out_network: 800 Gb/s InfiniBand or 400 Gb/s Ethernet
+    system:
+      power_kw_per_hbd: 97.2
+      cooling: liquid cooling
+      rack_form_factor: single rack
+    software:
+      runtime_stack:
+        - CUDA
+        - NCCL
+        - NVLink
+        - NVSwitch
+      framework_support:
+        - PyTorch
+        - TensorRT-LLM
+        - NeMo
+      ras_features:
+        - full-stack NVIDIA software integration
+        - mature collective communication stack
+        - integrated rack-scale system delivery
+
+  evidence_backed_metrics:
+    - metric_name: aggregate NVLink bandwidth
+      metric_category: bandwidth
+      metric_value: 130
+      metric_unit: TB/s
+      workload_name: rack-scale GPU domain
+      test_configuration: >
+        Public NVIDIA NVL72 / GB200 product material. The figure corresponds to
+        72 GPUs x 1.8 TB/s bidirectional NVLink bandwidth within the NVL72
+        rack-scale domain.
+      evidence_type: public_link
+      evidence_links:
+        - https://resources.nvidia.com/en-us-dgx-systems/dgx-superpod-gb200-datasheet
+      public_summary: >
+        NVL72 pushes NVLink bandwidth and domain size together, making it a
+        representative system-level front-runner rather than a chip-only upgrade.
+
+    - metric_name: per-GPU NVLink bandwidth
+      metric_category: bandwidth
+      metric_value: 1.8
+      metric_unit: TB/s
+      workload_name: per accelerator
+      test_configuration: >
+        Public Blackwell generation specification for NVLink 5.0 on B200/GB200.
+      evidence_type: public_link
+      evidence_links:
+        - https://resources.nvidia.com/en-us-dgx-systems/dgx-superpod-gb200-datasheet
+      public_summary: >
+        NVLink 5.0 doubles the per-GPU bandwidth of Hopper generation NVLink 4.0.
+
+    - metric_name: total HBM capacity per NVL72
+      metric_category: other
+      metric_value: 13.8
+      metric_unit: TB
+      workload_name: rack-scale memory capacity
+      test_configuration: >
+        Public product specification: 36 GB200 superchips, each with 384 GB HBM
+        across the two B200 GPUs, totaling about 13.8 TB per NVL72 domain.
+      evidence_type: public_link
+      evidence_links:
+        - https://resources.nvidia.com/en-us-dgx-systems/dgx-superpod-gb200-datasheet
+      public_summary: >
+        NVL72 combines very high compute density with a rack-scale memory pool,
+        making it well suited for large-model training and inference.
+
+    - metric_name: GPU power envelope
+      metric_category: power
+      metric_value: 97.2
+      metric_unit: kW
+      workload_name: accelerator subsystem
+      test_configuration: >
+        Public source aggregated in the whitepaper: 36 GB200 units at about
+        2.7 kW each for the GPU subsystem only.
+      evidence_type: report
+      evidence_links:
+        - https://developer.nvidia.com/blog/inside-nvidia-blackwell-ultra-the-chip-powering-the-ai-factory-era/
+      public_summary: >
+        The product delivers extreme rack-scale capability, but it also shows
+        the level of power and cooling commitment required for this position on
+        the Pareto frontier.
+
+  vendor_statement:
+    strengths:
+      - rack-scale native NVLink domain with 72 GPUs
+      - strong software-hardware co-design through CUDA and NCCL
+      - high memory bandwidth and high total HBM capacity per rack
+    target_workloads:
+      - dense TP-heavy training
+      - large-scale pretraining with strong collective communication demands
+      - high-end inference requiring large in-rack memory and bandwidth
+    differentiators:
+      - vertically integrated chip-switch-rack-software delivery
+      - NV-HBI packaging plus NVLink 5.0 plus NVSwitch 4.0 as a coordinated system move
+      - mature ecosystem and deployment readiness
+    notes: >
+      This example entry is compiled from public sources to demonstrate SPI
+      structure. In a real vendor PR, the company could supplement additional
+      measured Goodput, latency or energy-efficiency data with reproducible
+      test conditions and supporting evidence.
+
+committee_assessment:
+  assessment_version: spi-2026.03
+  assessment_date: 2026-03-08
+  review_status: published
+  evidence_level: evidence_backed
+  scoring:
+    latency_memory_semantics: 5
+    scale_limit: 4
+    topology_elasticity: 1
+    ecosystem_maturity: 5
+    power_tco: 3
+    software_complexity: 5
+  workload_fit:
+    - dense training
+    - TP-heavy workloads
+    - large-model inference
+  radar_summary: >
+    NVL72 sits near the Pareto frontier on latency, memory semantics and
+    ecosystem maturity. Its main trade-offs are fixed topology and very high
+    power/cooling requirements, rather than software readiness.
+  committee_comments: >
+    Example committee assessment based on public materials only. NVL72 is a
+    canonical benchmark product for SPI because it combines advanced packaging,
+    native rack-scale interconnect and mature software into one deliverable
+    system. It should be interpreted as a high-maturity reference point rather
+    than as a vendor-verified SPI submission.

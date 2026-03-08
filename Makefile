@@ -8,6 +8,7 @@ help:
 	@echo ""
 	@echo "使用方法:"
 	@echo "  make install   安装文档依赖"
+	@echo "  make spi       生成 SPI 已收录产品页面"
 	@echo "  make serve     启动实时预览服务器"
 	@echo "  make build     构建静态文档站点"
 	@echo "  make clean     清理构建产物"
@@ -18,11 +19,16 @@ install:
 	@echo "正在安装文档依赖..."
 	pip install -r requirements.txt
 
+# Generate SPI registry page
+spi:
+	@echo "正在生成 SPI 已收录产品页面..."
+	python3 scripts/generate_spi_registry.py
+
 # Live preview server
 serve:
 	@echo "正在启动实时预览服务器..."
 	@echo "请在浏览器中打开 http://127.0.0.1:8000"
-	mkdocs serve -w src -w mkdocs.yml --dev-addr 127.0.0.1:8000
+	mkdocs serve -w src -w mkdocs.yml -w overrides -w spi -w scripts -w hooks --dev-addr 127.0.0.1:8000
 
 # Build static site
 build:

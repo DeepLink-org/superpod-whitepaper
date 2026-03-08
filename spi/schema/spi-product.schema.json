@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://deeplink.org/superpod-whitepaper/spi/schema/spi-product.schema.json",
+  "title": "SPI Product Submission",
+  "type": "object",
+  "required": [
+    "meta",
+    "vendor_submission",
+    "committee_assessment"
+  ],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": [
+        "product_id",
+        "vendor_id",
+        "product_name",
+        "version",
+        "submission_date",
+        "submission_type",
+        "status"
+      ],
+      "properties": {
+        "product_id": { "type": "string" },
+        "vendor_id": { "type": "string" },
+        "product_name": { "type": "string" },
+        "version": { "type": "string" },
+        "submission_date": { "type": "string" },
+        "submission_type": {
+          "type": "string",
+          "enum": ["vendor_pr", "committee_init", "committee_update"]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["submitted", "under_review", "published", "archived"]
+        }
+      },
+      "additionalProperties": true
+    },
+    "vendor_submission": {
+      "type": "object",
+      "required": ["contacts", "product_summary", "spec"],
+      "properties": {
+        "contacts": { "type": "object" },
+        "product_summary": { "type": "object" },
+        "spec": { "type": "object" },
+        "evidence_backed_metrics": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "metric_name",
+              "metric_category",
+              "metric_value",
+              "metric_unit",
+              "test_configuration",
+              "evidence_type"
+            ],
+            "properties": {
+              "metric_name": { "type": "string" },
+              "metric_category": {
+                "type": "string",
+                "enum": [
+                  "latency",
+                  "bandwidth",
+                  "throughput",
+                  "goodput",
+                  "power",
+                  "efficiency",
+                  "other"
+                ]
+              },
+              "metric_value": {
+                "oneOf": [
+                  { "type": "string" },
+                  { "type": "number" }
+                ]
+              },
+              "metric_unit": { "type": "string" },
+              "workload_name": { "type": "string" },
+              "test_configuration": { "type": "string" },
+              "evidence_type": {
+                "type": "string",
+                "enum": ["report", "log", "paper", "public_link", "other"]
+              },
+              "evidence_links": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "public_summary": { "type": "string" }
+            },
+            "additionalProperties": true
+          }
+        },
+        "vendor_statement": { "type": "object" }
+      },
+      "additionalProperties": true
+    },
+    "committee_assessment": {
+      "type": "object",
+      "required": ["review_status", "evidence_level", "scoring"],
+      "properties": {
+        "assessment_version": { "type": "string" },
+        "assessment_date": { "type": "string" },
+        "review_status": {
+          "type": "string",
+          "enum": ["pending", "in_review", "published", "superseded"]
+        },
+        "evidence_level": {
+          "type": "string",
+          "enum": ["unreviewed", "self_reported", "evidence_backed", "committee_estimated"]
+        },
+        "scoring": {
+          "type": "object",
+          "properties": {
+            "latency_memory_semantics": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+            "scale_limit": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+            "topology_elasticity": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+            "ecosystem_maturity": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+            "power_tco": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+            "software_complexity": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 }
+          },
+          "additionalProperties": false
+        },
+        "workload_fit": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "radar_summary": { "type": "string" },
+        "committee_comments": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}
