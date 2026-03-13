@@ -1,6 +1,6 @@
 # Scale-Up 域互联协议（链路/事务层）
 
-本章介绍 Scale-Up 域的互联协议体系，涵盖链路层与事务层的技术选型与产业态势。当前 Scale-Up 互联正处于"百花齐放"的竞争窗口期——私有协议（NVLink、UB 灵衢、HSL）与开放标准（UALink、ESUN、SUE、Eth-X 等）并行演进，选型决策需要在**延迟、带宽、内存语义、生态兼容性与成本**之间寻找帕累托最优。
+本章介绍 Scale-Up 域的互联协议体系，涵盖链路层与事务层的技术选型与产业态势。当前 Scale-Up 互联正处于"百花齐放"的竞争窗口期——私有协议（NVLink、UB 灵衢、HSL）与开放标准（UALink、ESUN、SUE、Eth-X 等）并行演进，选型决策需要在**延迟、带宽、内存语义、传输可靠性、互联规模、生态兼容性与成本**之间寻找帕累托最优。
 
 ---
 
@@ -14,8 +14,16 @@
 |:-----|:---------|:----------|
 | 主要目标 | 在高带宽域内聚合更多加速器与显存 | 将多个节点或多个超节点继续横向扩展 |
 | 典型规模 | 节点内到超节点内，通常小于千卡级 | 集群级到园区级，通常万卡以上 |
-| 主体语义 | 内存语义、统一编址、原子操作 | 消息语义、队列/报文/流传输 |
+| 主体语义 | 内存语义（兼顾 DMA）、统一编址、原子操作 | 消息语义、队列/报文/流传输 |
 | 时延目标 | 百 ns 到亚 us 级 | 数 us 到数十 us 级 |
+| 保序约束 | 要求保序，端侧无排序能力 | 可接受乱序，由网卡完成重排序 |
+| 转发路径 | 固定，由端侧路径规划 | 灵活，多路径动态负载均衡 |
+| 拥塞控制 | 无拥塞控制算法，CBFC/PFC 保证无损 | PFC + ECN + DCQCN 等拥塞控制算法 |
+| 网络丢包 | 要求无损传输，不依赖端到端传输层 | 可接受丢包，RDMA 有端到端重传 |
+| 包长 | 命令包 <32B，数据包 ≤256B，可传输层拼包 | 长包为主（数据报文多 >2 KB） |
+| 物理层 | 包含但不限于以太网 PHY，更注重延时与编码复杂度平衡 | 标准以太网物理层 |
+| 数据链路层 | 基于 ID 查表路由，优化帧头（6–16B）或自定义格式，链路层重传 | 基于地址学习转发，标准帧头开销大，无链路层重传 |
+| 传输层 | 无 | 复杂传输控制协议（TCP/IP） |
 | 典型并行方式 | TP、EP | PP、DP |
 | 常见拓扑 | 单层交换、低直径专用 Fabric | 两层/三层 Clos、Fat-Tree、Dragonfly |
 
@@ -29,8 +37,8 @@
 |:-----|:------------------|:------------------------------|:-----------------------------|
 | 典型时延 | 100 us+ | <10 us | <1 us |
 | 典型带宽 | >100G | >800G | >12T |
-| 多租户特征 | 强 | 中 | 弱，通常单租户 |
-| 语义特征 | 通用数据通信 | 高性能消息通信 | 内存语义、短帧、低开销 |
+| 多租户特征 | 强 | 中 | 弱，通常单租户；逐渐出现多租户需求 |
+| 语义特征 | 通用数据通信 | 高性能消息通信 | 内存语义、短帧、优化帧头（6B–16B）、低开销 |
 | 最大链路长度 | 千米级 | 百米级 | 米级 |
 | 设计重点 | 兼容性与安全性 | 大规模组网与利用率 | 极低时延、无损与细粒度传输 |
 
@@ -41,6 +49,14 @@
 超节点的核心特征在于通过高速无损互联技术构建大规模计算域。其互联体系遵循从微观到宏观的层次化结构，从芯片内部的片上网络到集群级的数据中心网络，形成了完整的互联技术栈。
 
 芯片（Chip）通常由不同的芯粒（Die）组成，比如 CCD（Core Complex Die）和 IOD（I/O Die）。其中前者通常包含 CPU 或 GPU 的主要计算单元，而后者则负责 PCIe、内存控制器等 I/O 相关功能。通过 CCD 与 IOD 不同数量与规格的组合，可以制造出不同规格的芯片产品。在每个 Die 内部，通常使用片上网络（Network-on-Chip, NoC）来将处理单元（Processing Element, PE）组织起来，形成 GPU 上的计算单元，比如流式多处理器（Streaming Multiprocessor, SM）。而 Die 之间通过 Die-to-Die（D2D）互联进行通信。芯片之间则通过 Chip-to-Chip（C2C）互联进行通信。
+
+有限的光罩尺寸越来越难以满足日益增长的算力需求，Scale-Up 的出现有效地以系统方式解决了显存带宽和容量的问题，但这往往需要较大的互联带宽来支撑。IOD 芯粒架构应运而生——通过将 I/O 功能集中到独立的 IOD 上，释放 CCD 面积给计算逻辑，同时为多条高速互联通道提供统一的物理出口。
+
+![传统单片 Die 架构（左）与 IOD 芯粒架构（右）](imgs/iod-monolithic-die.png){: style="display:inline-block; width:38%; vertical-align:middle" } ➜
+![IOD 芯粒架构](imgs/iod-chiplet-arch.png){: style="display:inline-block; width:38%; vertical-align:middle" }
+/// caption
+从单片 Die（左）到 IOD 芯粒架构（右）的演进。IOD 将 SerDes 和 Scale-Up Link 从 GPU Main Die 中剥离，通过 UCIe D2D 互联，释放计算 Die 面积并统一高速 I/O 出口。
+///
 
 不论是片上的 NoC 通信，还是 D2D、C2C 通信，都可以在逻辑上分为三层抽象：
 
@@ -56,7 +72,7 @@
 |-----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Die内通信 | 自定义的金属走线<br>使用数字信号                                                                                                                                                  | NoC网络<br>包含路由算法的定义<br>流控机制和数据包定义                                                                                                                           | 片上总线协议，比如<br>AMBA AXI和AMBA CHI                                                                                                                                                                |
 | Die间通信 | - **BoW (Bunch of Wires)**：OCP定义的简化的die-to-die互连物理层协议<br>- **UCIe PHY**：UCIe的物理层规范<br>- 私有规范，比如AMD Infinity Fabric PHY, Intel AIB/Foveros PHY            | **UCIe D2D Adapter**: 负责链路训练、管理、CRC校验、重传机制<br>**私有实现**: AMD/Intel的私有链路管理逻辑                                                                           | **私有实现**: AMD Infinity Fabric Protocol (支持一致性)<br>**UCIe Protocol Layer**: 承载 **PCIe**, **CXL**, 和其他原生流协议(Streaming)                                                                |
-| 片间通信  | - **CEI**: OIF制定的高速电气I/O规范，包含25.6G/56G/112G等多种规范<br>- **PCIe PHY**: 遵循或参考CEI<br>- **NVLink PHY**: NVIDIA私有SerDes实现<br>- **以太网PHY**: 如以太网光/电模块 | **PCIe Link Layer**: 流量控制、ACK/NAK、数据包排序<br>**CXL.io Link Layer**: 复用PCIe的链路层<br>**NVLink Link Layer**: NVIDIA私有链路管理和流控<br>**Ethernet MAC Layer / RoCE** | **PCIe Transaction Layer**: 内存读写(RW)、配置、消息<br>**CXL (.cache & .mem)**: 实现缓存一致性、内存扩展<br>**NVLink Protocol**: GPU间P2P内存访问、原子操作<br>**TCP/IP, RoCEv2**: 基于以太网的应用层协议 |
+| 片间通信  | - **CEI**: OIF制定的高速电气I/O规范，包含25.6G/56G/112G等多种规范<br>- **PCIe PHY**: 遵循或参考CEI<br>- **NVLink PHY**: NVIDIA私有SerDes实现<br>- **以太网PHY**: 如以太网光/电模块 | **PCIe Link Layer**: 流量控制、ACK/NAK、数据包排序<br>**CXL.io Link Layer**: 复用PCIe的链路层<br>**NVLink Link Layer**: NVIDIA私有链路管理和流控<br>**Ethernet MAC Layer / RoCE** | **PCIe Transaction Layer**: 内存读写(RW)、配置、消息<br>**CXL (.cache & .mem)**: 实现缓存一致性、内存扩展<br>**NVLink Protocol**: GPU间P2P内存访问、原子操作<br>**TCP/IP, RoCEv2**: 基于以太网的应用层协议<br>**SUE-T**: 基于以太网的 Scale-Up 传输协议 |
 
 ## 大模型正在如何重塑协议需求
 
@@ -93,12 +109,12 @@
 |:--|:-----|:-------|:-------|:-------|:-------|:---------|
 | 1 | **NVLink** | NVIDIA | 私有 SerDes | 自定义 Flit | 内存语义 | 单层，≤576 |
 | 2 | **Infinity Fabric** | AMD | 私有 SerDes | 自定义 Flit | 内存语义 | 单层，≤16 |
-| 3 | **UALink** | AMD/Intel/Google 等 | 以太网 PHY | 自定义 Flit | 内存语义 | 单层，≤1024 |
+| 3 | **UALink** | AMD/Intel/Google 等 | 以太网 PHY 或 PCIe PHY | 自定义 Flit 或 PCIe Flit | 内存语义 | 单层，≤1024 |
 | 4 | **UB 灵衢** | 华为 | 私有 | 自定义 Flit | 内存/消息语义 | 多层，万卡级 |
-| 5 | **HSL** | 海光 | 私有 | 自定义 Flit | 内存/消息语义 | 多层 |
+| 5 | **HSL** | 海光 | 私有或 PCIe/以太 PHY | 自定义 Flit | 内存/消息语义 | 多层 |
 | 6 | **ALS** | 阿里云/信通院 | 以太网 PHY | 兼容 UALink | 内存/消息语义 | 多层，≤2000 |
-| 7 | **ESUN** | OCP (NVIDIA/Broadcom/Cisco) | 以太网 | 以太网 + LLR/CBFC | 内存/消息语义 | 单层，≤1024 |
-| 8 | **SUE** | Broadcom | 以太网 | 压缩头 + LLR/CBFC | 内存/消息语义 | 单层，≤1024 |
+| 7 | **ESUN** | OCP (NVIDIA/Broadcom/Cisco) | 以太网 | 压缩头 + 以太网 + LLR/CBFC | 内存语义 | 单层，≤1024 |
+| 8 | **SUE-T** | Broadcom | 以太网 | NA | 内存语义，端到端重传 | 单层，≤1024 |
 | 9 | **Eth-X** | 腾讯/信通院 (ODCC) | 以太网 | 自定义 | 内存/消息语义 | 单层，≤512 |
 | 10 | **Ether-Link** | 字节跳动 | 以太网 | OEFH 压缩头 + LLR/CBFC | 内存/消息语义 | 单层 |
 | 11 | **高通量 Eth+** | 阿里云/中科院计算所 | 以太网 | 自定义 | 内存/消息语义 | 多层，≤1024 |
@@ -111,7 +127,7 @@
 
 ### 智算互联总线的工程抽象
 
-无论是 NVLink、UB 灵衢、HSL 还是 UALink，本质上都在试图把传统"设备互联"提升为一种**面向 AI 计算的智算互联总线**。它与传统通算总线相比，主要区别不在于是否还能进行数据搬运，而在于是否能够同时满足以下几项要求：
+无论是 PCIe、NVLink、UB 灵衢、HSL 还是 UALink，本质上都在试图把传统"设备互联"提升为一种**面向 AI 计算的智算互联总线**。它与传统通算总线相比，主要区别不在于是否还能进行数据搬运，而在于是否能够同时满足以下几项要求：
 
 - **分布式调度而非集中仲裁**：避免传统总线控制器成为瓶颈。
 - **Tbps 级聚合带宽与百 ns 级转发时延**：使远端显存访问尽量接近本地访问体验。
@@ -122,9 +138,9 @@
 
 ### PCIe/CXL
 
-PCIe 是最早应用于 Scale-Up 的互联总线。PCIe 5.0 单 Lane 提供 32 GT/s（约 63 GB/s x16），PCIe 6.0 翻倍至 64 GT/s。但相比专用 Scale-Up 协议，PCIe 仍存在 5–7× 的带宽差距和较高的事务层开销。CXL 基于 PCIe 物理层扩展了 .cache/.mem 语义，为一致性与内存池化提供基础，在通算场景（CPU 为中心）中仍是核心总线。
+PCIe 是最早应用于 Scale-Up 的互联总线。PCIe 5.0 单 Lane 提供 32 GT/s（单向传输峰值带宽 64 GB/s x16），PCIe 6.0 翻倍至 64 GT/s。但相比专用 Scale-Up 协议，PCIe 仍存在 5–7× 的带宽差距和较高的事务层开销；相比基于以太的 Scale-Up 协议，PCIe 仍有接近 2× 的带宽差距——在单位长度的芯片海岸线上，使用 112G 以太 PHY 比使用 PCIe 6.0 PHY 可多实现约 30% 的带宽。CXL 基于 PCIe 物理层扩展了 .cache/.mem 语义，为一致性与内存池化提供基础，可用于以 CPU 为中心的通算场景；在不依赖 CPU 计算的场景下，CXL 也可以作为 GPU 本地显存扩展的重要总线形态。
 
-国产 GPU 厂商中，PCIe Switch 互联仍是重要的基础方案，部分厂商在此基础上叠加自研桥接技术以提升卡间带宽（如壁仞 BLink 448 GB/s、沐曦 MetaXLink >1 TB/s、华为 HCCS 2 TB/s）。
+国产 GPU 厂商中，PCIe Switch 互联因其较低的延时以及成熟的生态，仍是重要的基础方案，部分厂商在此基础上叠加自研桥接技术以提升卡间带宽（如壁仞 BLink 448 GB/s、沐曦 MetaXLink >1 TB/s、华为 HCCS 2 TB/s 等）。
 
 ### NVIDIA NVLink / NVSwitch
 
@@ -141,11 +157,62 @@ NVSwitch 的核心技术优势包括：
 
 Infinity Fabric 是 AMD 的统一互联架构，采用分层设计（协议层 + 物理层），支持全局缓存一致性与内存语义。MI300X 支持 7 条 XGMI 链路，单 GPU 间带宽达 128 GB/s（单向），8 GPU 集群互联带宽超 1 TB/s。其去中心化设计使所有设备平等协同，但受限于 AMD GPU 市场占有率，生态覆盖面有限。
 
+从协议栈分层看：
+
+- **物理层**：复用低延时 PCIe PHY 或自研低延时物理层。
+- **数据链路层**：采用类 PCIe 控制器思路，并在此基础上增加了 GPU 卡间或 GPU-CPU 卡间互联的缓存一致性协议，节省远端存取的访问延时。
+- **事务层**：相对私有，与主数据通路 Data Fabric 有较好的全局耦合。
+
+由于其高度定制化，目前尚未出现支持 Infinity Fabric 的专用交换机，GPU 卡间拓扑多为直连结构。
+
 ### UALink
 
-UALink（Ultra Accelerator Link）由 AMD 牵头，联合 Intel、Google、Meta 等发起的开放标准，2025 年 6 月发布 1.0 规范。采用 FAM（Flat Address Memory）扁平地址架构，原生支持 Load/Store/原子操作。单通道速率 200 GT/s，四通道 800 Gbps 全双工，64B 负载往返延迟 <1 μs，链路利用率 93%。采用固定 640B Flit 设计，配合 LLR + CBFC 实现无损传输。单 Pod 支持 1024 个加速器。
+UALink（Ultra Accelerator Link）由 AMD 牵头，联合 AsteraLabs、AWS、Cisco、Google、HPE、Intel、Meta、Microsoft、AliCloud、Apple、SNPS 作为董事会成员及超过 80 余家贡献者共同发起的开放标准，2025 年 6 月发布 1.0 规范。组织后来也有为特定客户规划基于 PCIe 物理层的 UALink 协议。
 
-UALink 的战略意义在于为非 NVIDIA 生态提供了一个**开放的内存语义互联标准**，但目前 AMD 自身尚未公布基于 UALink 的交换芯片产品。
+UALink 采用 FAM（Flat Address Memory）扁平地址架构，原生支持 Load/Store/原子操作。单通道速率 200 GT/s，四通道 800 Gbps 全双工，64B 负载往返延迟 <1 μs，链路利用率 93%。采用固定 640B Flit 设计，配合 LLR + CBFC 实现无损传输。单 Pod 支持 1024 个加速器。
+
+下图展示 UALink 200 的端到端协议栈结构——左侧为加速器端，右侧为交换机/加速器端，中间标注了各层接口与 Flit 尺寸。
+
+![UALink 200 协议栈结构](imgs/ualink-protocol-stack.png)
+/// caption
+UALink 200 端到端协议栈。物理层复用以太网 PHY（212.5G SerDes），数据链路层以 640B DL Flit 为传输单元，事务层以 64B TL Flit 承载内存语义操作，协议层通过 UPLI 接口与加速器功能层对接。
+///
+
+UALink 的主要特性包括：
+
+- 实现内存语义
+- 高带宽：支持单向传输带宽为 100G/200G/400G/800Gbps 网络端口
+- 低延迟：请求/响应 RTT <1 μs
+- 零丢包：信用流控、链路层重传
+- 高链路利用率：88%–95%
+- 高安全：端到端加密与认证
+
+![UALink TL/DL 各层特性与设计目标](imgs/ualink-features-overview.png)
+/// caption
+UALink 各层特性与设计目标总览。TL/Protocol 层为 UALink 独有，DL 层亦为 UALink 自定义，PHY 层复用标准以太网。右侧汇总了关键设计目标：Fixed Payloads（64B/640B）、LLR、CBFC、RTT <1 μs、E2E 加密等。
+///
+
+从协议栈分层看：
+
+- **物理层**：UALink 主流采用 IEEE 802.3 以太协议物理层，支持 112G 和 224G 规格，单口支持 x4/x2/x1 Lane。同时也规划了兼容 PCIe 6.4 的 128G 版本，单口支持 x8/x4/x2 Lane。基于 IEEE 802.3 标准的 SerDes 速率为 212.5G，支持 200GBASE-KR1/CR1、400GBASE-KR2/CR2、800GBASE-KR4/CR4，同时提供较低速率选项 106.25G。修改了 Reconciliation Sublayer（RS）、PCS 和 PMA 层；自动协商和链路训练（AN/LT）与 802.3 标准一致。640B DL Flit 直接放入一个 RS(544,514) 码字中，减小延迟并减少重传的 DL Flit 数量。
+
+![UALink 协议层与 OSI 参考模型的对应关系](imgs/ualink-phy-osi-mapping.png)
+/// caption
+UALink 协议层与 OSI 参考模型的映射。DL 层包含 Pacing/Rate Adaptation、DL-Message Service、Flit Packer 和 Link Level Replay 四个子功能；PHY 层复用以太网的 PCS*/PMA*/PMD，其中 PCS 和 PMA 做了针对 Flit 对齐的微调。
+///
+
+- **数据链路层**：采用固定长度传输，主要功能涵盖 DL Flit 打包、消息服务、链路层重传和发送 pacing。DL Flit 宽度为 640B，链路层重传粒度亦为 640B，DL Flit 做 CRC 校验。TX 方向将 64B TL Flit 组装为 640B DL Flit，RX 方向做逆向拆分。消息服务通过 4 字节 Alternate Sector 传输，被打包到 DL Flit 中，用于传递事务层速率、获取链路对端设备 ID 和端口号等信息。
+
+- **事务层**：传输单元为 TL Flit，宽度 64B，被分为高低两个 32B half flit，也可分为 16 个 4 字节 sector。
+
+![UALink 64 字节 TL Flit 结构](imgs/ualink-tl-flit-structure.png)
+/// caption
+UALink TL Flit（64B）内部结构。每个 Flit 由 Upper Half-Flit（Sector 15–8）和 Lower Half-Flit（Sector 7–0）组成，可同时携带最多 3 个请求（Req0/Req1/Req2）及其数据、原子操作数、认证标签（AuthTag）和流控信息（FC）。
+///
+
+- **协议层**：支持 UPLI 的 Originator 和 Completer 设备，请求与响应总是成对出现。内存访问对齐 256B 边界，支持 4 个通道（请求通道、读响应通道、原始数据通道、写响应通道），每个通道均有独立流控机制。写请求最多带 256B 数据，读响应最多返回 256B 数据。
+
+UALink 的战略意义在于为非 NVIDIA 生态提供了一个**开放的内存语义互联标准**，但目前 AMD 自身尚未公布基于 UALink 的交换芯片产品。包括其他交换机厂商，也尚未有基于 UALink 协议的产品，现有超节点系统方案中尚未出现基于 UALink 协议的交换机产品。
 
 ### 华为 UB 灵衢
 
@@ -153,11 +220,27 @@ UB 灵衢是华为自研的超节点互联协议，首次应用于 CloudMatrix 3
 
 ### 海光 HSL
 
-HSL（High-performance Scalable Link）是海光自研的内存语义互联总线，采用"总线 + 网络"融合架构，支持内存语义与消息语义双模式。传输延迟从 PCIe 的 600 ns 降至 300 ns，带宽利用率提升 50%+。支持在芯片封装内高密度集成 HSL 实例。2025 年 12 月开放协议（开放但非开源）。
+HSL（Hygon System Link / Heterogeneous Scalable Link）是海光自研的内存语义互联总线，支持多种级别的硬件一致性方案，采用"总线 + 网络"融合架构，支持内存语义与消息语义双模式。传输延迟从 PCIe 的 600 ns 降至 300 ns，带宽利用率提升 50%+。支持在芯片封装内高密度集成 HSL 实例。2025 年 12 月开放协议（开放但非开源）。物理层方面，HSL 支持私有 PHY 以及 PCIe/以太 PHY 等多种实现路径。
+
+通过 HSL 1.0 的直连为起点，结合带宽密度更高的 HSL 2.0 协议扩大生态，可组建百万卡级规模。
 
 ### 阿里 ALS
 
-ALS（ALink System）由阿里云发起，包含 ALS-D 数据面（采用 UALink 协议）与 ALS-M 管控面（标准化接入与集群管理），实现数据传输与设备管理解耦。一级互连支持 64–80 节点，二级互连可达 2000+ 节点。
+ALS（ALink System）由阿里云联合信通院、AMD、浪潮等共建，兼容 UALink 国际标准，目标为替代私有互连方案，构建开放、高性能、可大规模扩展的 AI 算力网络。
+
+ALS 由 ALS-D（数据面）与 ALS-M（管控面）双平面组成，以实现数据传输与设备管理解耦：
+
+- **ALS-D（数据面）**：基于 UALink 开放协议，原生支持内存语义访问、显存共享、在网计算。硬件层采用专用 UALink Switch 芯片，支持单层/双层组网，各级保持 1:1 带宽收敛比。
+- **ALS-M（管控面）**：提供标准化接入与统一软件接口，兼容多厂商芯片，支持单租/多租、弹性配置与集群运维管理。
+
+ALS 一级互连支持 64–80 节点，二级互连可达 2000+ 节点。
+
+![ALS 一级互联与二级互联对比](imgs/als-interconnect-levels.png)
+/// caption
+ALS 一级互联（单层）与二级互联（双层）的核心参数对比。一级互联面向超节点内强并行场景（64–80 节点，单跳最低延迟，1:1 收敛），二级互联面向跨机柜大规模集群（≥2000 节点，两跳延迟）。
+///
+
+实际应用中，是否需要通过 ALS-M 管控面接入超节点做传输的数据，以及是否有其他解耦方案（如通过北向 PCIe 接入 BMC 进行整网管理），尚待探讨。
 
 ## 私有协议汇总对比
 
@@ -169,6 +252,22 @@ ALS（ALink System）由阿里云发起，包含 ALS-D 数据面（采用 UALink
 | **最大互联规模** | 576 GPU | 8–16 GPU | 1024 加速器 | 万卡级 | 未公开 | 2000+ 节点 |
 | **内存语义** | 支持（显存池化） | 支持（CPU-GPU 统一寻址） | 原生支持 | 支持（全局地址一致性） | 支持 | 支持 |
 | **生态开放性** | 封闭 | 半开放（AMD 生态） | 完全开放 | 开放规范 2.0 | 开放协议 | 开放（兼容 UALink） |
+
+### SUE 与 UALink-200G 对比
+
+作为两条主要的开放 Scale-Up 路线，SUE（以太型）和 UALink-200G（总线型）在多项关键参数上各有侧重：
+
+| 维度 | SUE (112G/224G) | UALink-200G |
+|:-----|:----------------|:------------|
+| 单 Lane 速率 | 112G / 224G | 112G / 224G |
+| 物理层协议 | 以太协议，IEEE 802.3 | 以太协议，IEEE 802.3 |
+| 单口规格 | x8/x4/x2/x1 | x4/x2/x1 |
+| 数据传输格式 | 可变长度；TL: Packet 12B–xxB（取决于拼包策略）；DL: Frame 64B–4KB | 固定长度；TL: 64B 固定 Flit；DL: 640B Flit |
+| 可靠性传输 | PL: FEC544/FEC272；DL: CRC + 链路层重传；TL: 利用 RH（如 PSN）做端到端重传及 1 μs 以内闪断恢复 | PL: FEC544；DL: CRC + 链路层重传 |
+| 链路利用率 | AFH Gen2 包头 + FCS 固定开销 10B 或 16B；对小包不利（依赖拼包），但上限更高 | 包头 + CRC 固定开销 12B |
+| 端到端延时 | 1 级交换 ~1 μs | 1 级交换 ~1.1 μs |
+| 保序 | 不支持多平面保序，需端侧将保序 stream 放在同一 port 上 | 不支持多平面保序，需端侧将保序 stream 放在同一 port 上 |
+| 云端管理 | SONiC Scale-Up WG — 云级可靠性与可扩展性 | 待定 |
 
 ## 开放以太协议分析
 
