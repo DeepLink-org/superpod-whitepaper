@@ -652,9 +652,119 @@ html {
   background: linear-gradient(90deg, #0f766e 0 34%, #b45309 34% 67%, #7c3aed 67% 100%);
 }
 
+.md-typeset .evidence-token {
+  display: inline-block;
+  position: relative;
+  margin-left: 0.02rem;
+  font-family: var(--sp-font-body);
+  font-size: 0.95em;
+  font-weight: 600;
+  line-height: 1;
+  vertical-align: baseline;
+  white-space: nowrap;
+  opacity: 0.7;
+  cursor: help;
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+
+.md-typeset .evidence-token:hover,
+.md-typeset .evidence-token:focus-visible {
+  opacity: 1;
+  transform: scale(1.08);
+  outline: none;
+}
+
+.md-typeset .evidence-token::after {
+  content: attr(data-evidence-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 0.45rem);
+  z-index: 10;
+  min-width: max-content;
+  max-width: 18rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: 0.45rem;
+  background: rgba(15, 23, 42, 0.94);
+  color: #f8fafc;
+  font-size: 0.72rem;
+  font-weight: 500;
+  line-height: 1.35;
+  text-align: left;
+  white-space: normal;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.16);
+  transform: translate(-50%, 0.2rem);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+
+.md-typeset .evidence-token::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 0.14rem);
+  z-index: 10;
+  width: 0.5rem;
+  height: 0.5rem;
+  background: rgba(15, 23, 42, 0.94);
+  transform: translateX(-50%) rotate(45deg);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+
+.md-typeset .evidence-token:hover::after,
+.md-typeset .evidence-token:focus-visible::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.md-typeset .evidence-token:hover::before,
+.md-typeset .evidence-token:focus-visible::before {
+  opacity: 1;
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.md-typeset .evidence-token-fact {
+  color: #1d4ed8;
+}
+
+.md-typeset .evidence-token-verified {
+  color: #0f766e;
+}
+
+.md-typeset .evidence-token-inductive {
+  color: #b45309;
+}
+
+.md-typeset .evidence-token-judgment {
+  color: #7c3aed;
+}
+
 [data-md-color-scheme="slate"] .md-typeset .evidence-card {
   border-color: rgba(255, 255, 255, 0.08);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+[data-md-color-scheme="slate"] .md-typeset .evidence-token-fact {
+  color: #8db5ff;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .evidence-token-verified {
+  color: #75d4cb;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .evidence-token-inductive {
+  color: #f4b267;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .evidence-token-judgment {
+  color: #c4b5fd;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .evidence-token::after,
+[data-md-color-scheme="slate"] .md-typeset .evidence-token::before {
+  background: rgba(2, 6, 23, 0.96);
 }
 
 @media screen and (max-width: 60em) {
@@ -665,6 +775,10 @@ html {
   .md-typeset .evidence-inline {
     display: inline-flex;
     margin-left: 0.4rem;
+  }
+
+  .md-typeset .evidence-token {
+    margin-left: 0.02rem;
   }
 }
 
@@ -705,6 +819,12 @@ html {
 }
 
 /* 16. 移动端优化 ----------------------------------------------------------- */
+@media screen and (min-width: 76.25em) {
+  .md-sidebar--primary .md-nav--primary .md-nav__title {
+    display: none;
+  }
+}
+
 @media screen and (max-width: 76.1875em) {
   .md-typeset {
     font-size: 0.85rem;
