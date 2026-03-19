@@ -40,14 +40,6 @@
 
 从Blackwell架构开始，**先进封装**成为其算力增长的又一关键。通过NV-HBI（NVIDIA High-Bandwidth Interface）技术，NVIDIA将两颗GPU裸片（Die）高速互联，提供高达10 TB/s的双向带宽，使它们在逻辑上可作为单一、统一的GPU工作[^nvhbi]。这标志着NVIDIA的增长引擎已从单纯提升单点指标（如芯片算力或互联速率），全面转向以系统为单位的整体工程优化，从而确保稳定且可预测的性能飞跃。【归纳】
 
-## 参考文献
-
-[^gb200]: [NVIDIA DGX GB200 Datasheet](https://resources.nvidia.com/en-us-dgx-systems/dgx-superpod-gb200-datasheet)
-[^hgx_a100]: [NVIDIA HGX A100 Datasheet](https://www.nvidia.com/content/dam/en-zz/Solutions/Data-Center/HGX/a100-80gb-hgx-a100-datasheet-us-nvidia-1485640-r6-web.pdf)
-[^nvhbi]: [Inside NVIDIA Blackwell Ultra: The Chip Powering the AI Factory Era](https://developer.nvidia.com/blog/inside-nvidia-blackwell-ultra-the-chip-powering-the-ai-factory-era/)
-[^nvl32]: [NVIDIA GH200 Grace Hopper Superchip Architecture](https://resources.nvidia.com/en-us-grace-cpu/nvidia-grace-hopper?ncid=no-ncid)
-[^huangs_law]: [Huang’s Law (IEEE Spectrum)](https://spectrum.ieee.org/nvidia-gpu)
-
 ## 代际对比
 
 | 系列 | Volta | Ampere | Hopper | Blackwell | Rubin |
@@ -95,3 +87,10 @@ NVIDIA 在超节点领域的领先地位来自于其系统化的技术战略：
 4. **ESUN 布局**：作为 ESUN 发起方之一，NVIDIA 同时押注开放以太协议路线，以对冲 NVLink 生态封闭性带来的潜在反垄断和客户锁定风险
 
 对于竞争者而言，单纯在某一维度追赶（如芯片算力或互联带宽）难以形成有效挑战，必须建立系统级的竞争能力。
+
+
+[^gb200]: [NVIDIA DGX GB200 Datasheet](https://resources.nvidia.com/en-us-dgx-systems/dgx-superpod-gb200-datasheet)
+[^hgx_a100]: [NVIDIA HGX A100 Datasheet](https://www.nvidia.com/content/dam/en-zz/Solutions/Data-Center/HGX/a100-80gb-hgx-a100-datasheet-us-nvidia-1485640-r6-web.pdf)
+[^nvhbi]: [Inside NVIDIA Blackwell Ultra: The Chip Powering the AI Factory Era](https://developer.nvidia.com/blog/inside-nvidia-blackwell-ultra-the-chip-powering-the-ai-factory-era/)
+[^nvl32]: [NVIDIA GH200 Grace Hopper Superchip Architecture](https://resources.nvidia.com/en-us-grace-cpu/nvidia-grace-hopper?ncid=no-ncid)
+[^huangs_law]: [Huang’s Law (IEEE Spectrum)](https://spectrum.ieee.org/nvidia-gpu)
