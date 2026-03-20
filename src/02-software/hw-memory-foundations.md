@@ -19,12 +19,18 @@ graph TD
     C -->|"Load / Store / Atomic / Fence"| D
     D -->|"Flit 或以太帧"| E
 
-    style A fill:#4a6fa5,color:#fff,stroke:none
-    style B fill:#6b8cae,color:#fff,stroke:none
-    style C fill:#166088,color:#fff,stroke:none
-    style D fill:#166088,color:#fff,stroke:none
-    style E fill:#2d4059,color:#fff,stroke:none
+    style A fill: #94c1e8, color: #fff, stroke:none
+    style B fill: #c0d1e3, color: #fff, stroke:none
+    style C fill: #8eb4d0, color: #fff, stroke:none
+    style D fill: #8eb4d0, color: #fff, stroke:none
+    style E fill: #a8b4c7, color: #fff, stroke:none
 ```
+<!-- 各种方式指定字体颜色为白色无效，一直保持黑色，因此只能修改背景颜色，下面为原来的配置
+    style A fill: #4a6fa5,color: #fff, stroke:none
+    style B fill: #6b8cae,color: #fff, stroke:none
+    style C fill: #166088,color: #fff, stroke:none
+    style D fill: #166088,color: #fff, stroke:none
+    style E fill: #2d4059,color: #fff, stroke:none -->
 
 每一层都对上层做出语义承诺：编程模型承诺"远端访存像本地一样可编程"，内存模型定义可见性和顺序保证，事务层和网络负责在硬件上兑现这些保证。Scale-Up 互联正从早期的消息语义（显式 Send/Receive、RDMA，适用于 Scale-Out 松耦合场景）全面转向内存语义（隐式 Load/Store/Atomic，统一地址空间），NVLink、UALink、OISA、SUE 等主要新兴协议均采用后者。**本节聚焦事务层和网络层**——分析硬件侧必须提供哪些机制，才能让上层的内存模型承诺不落空。换句话说，这条语义链路的完整程度，决定了硬件打开的可能性空间有多大；支持的语义越完整、保序机制越高效，软件可兑现的 Goodput 上限就越高。
 
@@ -148,15 +154,24 @@ graph LR
     Net --> RMC --> RHBM
     Net -. "Fence 写回<br>~1-10μs" .-> Proxy
 
-    style SM fill:#e8636f,color:#fff,stroke:none
-    style MMU fill:#4a6fa5,color:#fff,stroke:none
-    style IO fill:#4a6fa5,color:#fff,stroke:none
-    style Proxy fill:#2d8659,color:#fff,stroke:none
-    style Order fill:#2d8659,color:#fff,stroke:none
-    style Net fill:#d4a843,color:#fff,stroke:none
-    style RHBM fill:#2d4059,color:#fff,stroke:none
-    style RMC fill:#2d4059,color:#fff,stroke:none
+    style SM fill:	#f0949b, color: #fff, stroke:none
+    style MMU fill: #7995c8, color: #fff, stroke:none
+    style IO fill: #7995c8, color: #fff, stroke:none
+    style Proxy fill: #71c99c, color: #fff, stroke:none
+    style Order fill: #71c99c, color: #fff, stroke:none
+    style Net fill: #eccf82, color: #fff, stroke:none
+    style RHBM fill: #8c9dba, color: #fff, stroke:none
+    style RMC fill: #8c9dba, color: #fff, stroke:none
 ```
+<!-- 各种方式指定字体颜色为白色无效，一直保持黑色，因此只能修改背景颜色，下面为原来的配置
+    style SM fill: #e8636f,color: #fff,stroke:none
+    style MMU fill: #4a6fa5,color: #fff,stroke:none
+    style IO fill: #4a6fa5,color: #fff,stroke:none
+    style Proxy fill: #2d8659,color: #fff,stroke:none
+    style Order fill: #2d8659,color: #fff,stroke:none
+    style Net fill: #d4a843,color: #fff,stroke:none
+    style RHBM fill: #2d4059,color: #fff,stroke:none
+    style RMC fill: #2d4059,color: #fff,stroke:none -->
 
 **三条路径的延迟特征**：
 
@@ -223,15 +238,15 @@ graph LR
 
 **链路/网络侧承载**可分为两大路线：Flit 原生总线方案（NVLink、UALink）和以太网增强方案（OISA、SUE、ETH-X PAXI）。
 
-| 特性 | NVLink / UALink | 以太网增强（OISA / SUE / ETH-X PAXI） |
+| 特性<div style="width: 100px;"> | NVLink / UALink | 以太网增强（OISA / SUE / ETH-X PAXI） |
 |:-----|:----------------|:--------------------------------------|
 | **封装方式** | 固定 Flit，原生内存语义 | AXI 事务 → 以太帧（帧头设计各异） |
-| **帧头开销** | 极小（UALink 控制半 Flit 32B 含多事务） | OISA TLP ~20B；SUE AFH 压缩仅 6B；ETH-X PRI 压缩帧 |
+| **帧头开销** | 极小（UALink 控制半 Flit 32B 含多事务） | OISA TLP ~20B；SUE AFH 压缩仅 6B；<br>ETH-X PRI 压缩帧 |
 | **事务粒度** | 64-256B 固定事务（UALink），确定性缓冲分配 | 可变长以太帧封装，效率依赖聚合策略 |
 | **链路利用率** | ~93-95%（UALink 目标 93%，TL 数据效率 95.2%） | ~56%（标准帧）→ ~74-77%（压缩 + 聚合） |
 | **端到端延迟** | <100ns（NVLink 单跳）；亚微秒（UALink 规范目标） | 0.5-2μs（交换芯片转发 ~250ns） |
 | **流控机制** | UALink：三层独立信用域（UPLI / TL / Switch），单跳 6 组信用环路；NVLink 内建 | LLR + CBFC（链路层单层信用，各方案均已支持） |
-| **地址空间** | UALink：Fabric 级 57-bit 统一寻址（128 PB）；NVLink：私有统一寻址 | 地址翻译由 XPU 厂商实现，Fabric 仅负责传输 |
+| **地址空间** | UALink：Fabric 级 57-bit 统一寻址（128 PB）；<br>NVLink：私有统一寻址 | 地址翻译由 XPU 厂商实现，Fabric 仅负责传输 |
 | **交换芯片** | 专用（NVSwitch 已量产；UALink Switch 2026 评估硬件） | 复用/增强标准以太网交换芯片 |
 | **网内计算** | SHArP（NVSwitch） | CCA（OISA）；UALink/SUE 暂未支持 |
 | **生态** | 私有（NVLink）/ 115+ 成员开放联盟（UALink） | 成熟以太网生态 |

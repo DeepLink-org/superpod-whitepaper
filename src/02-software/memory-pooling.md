@@ -52,12 +52,20 @@ graph TD
 
     A --> B --> C --> D --> E
 
-    style A fill:#4a6fa5,color:#fff,stroke:none
-    style B fill:#6b8cae,color:#fff,stroke:none
-    style C fill:#166088,color:#fff,stroke:none
-    style D fill:#166088,color:#fff,stroke:none
-    style E fill:#2d4059,color:#fff,stroke:none
+    style A fill: #94c1e8, color: #fff, stroke:none
+    style B fill: #c0d1e3, color: #fff, stroke:none
+    style C fill: #8eb4d0, color: #fff, stroke:none
+    style D fill: #8eb4d0, color: #fff, stroke:none
+    style E fill: #a8b4c7, color: #fff, stroke:none
+
+
 ```
+<!-- 各种方式指定字体颜色为白色无效，一直保持黑色，因此只能修改背景颜色，下面为原来的配置
+    style A fill: #4a6fa5,color: #fff,stroke:none
+    style B fill: #6b8cae,color: #fff,stroke:none
+    style C fill: #166088,color: #fff,stroke:none
+    style D fill: #166088,color: #fff,stroke:none
+    style E fill: #2d4059,color: #fff,stroke:none -->
 
 ### 统一 API 接口
 

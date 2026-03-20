@@ -113,14 +113,23 @@ graph LR
     NVL_B --> MC --> HBM
     HBM -.->|"数据返回"| SM
 
-    style SM fill:#e8636f,color:#fff,stroke:none
-    style GMMU fill:#4a6fa5,color:#fff,stroke:none
-    style NVL_A fill:#4a6fa5,color:#fff,stroke:none
-    style Route fill:#d4a843,color:#fff,stroke:none
-    style NVL_B fill:#2d4059,color:#fff,stroke:none
-    style MC fill:#2d4059,color:#fff,stroke:none
-    style HBM fill:#2d4059,color:#fff,stroke:none
+    style SM fill: #f0949b,color: #fff,stroke:none
+    style GMMU fill: #7995c8,color: #fff,stroke:none
+    style NVL_A fill: #7995c8,color: #fff,stroke:none
+    style Route fill: #eccf82,color: #fff,stroke:none
+    style NVL_B fill: #8c9dba,color: #fff,stroke:none
+    style MC fill: #8c9dba,color: #fff,stroke:none
+    style HBM fill: #8c9dba,color: #fff,stroke:none
+
 ```
+<!-- 各种方式指定字体颜色为白色无效，一直保持黑色，因此只能修改背景颜色，下面为原来的配置
+    style SM fill: #e8636f,color: #fff,stroke:none
+    style GMMU fill: #4a6fa5,color: #fff,stroke:none
+    style NVL_A fill: #4a6fa5,color: #fff,stroke:none
+    style Route fill: #d4a843,color: #fff,stroke:none
+    style NVL_B fill: #2d4059,color: #fff,stroke:none
+    style MC fill: #2d4059,color: #fff,stroke:none
+    style HBM fill: #2d4059,color: #fff,stroke:none -->
 
 ### PTE 如何承接远程访问语义
 
