@@ -31,6 +31,7 @@ CloudMatrix 384 的规格可以先从其三级组织方式理解，再展开到�
 
 ```mermaid
 block-beta
+
 	columns 4
 
 	Core0["AI Core"] space:2 Core1["AI Core"]
@@ -67,12 +68,12 @@ block-beta
 图：CloudMatrix 384 的分层结构示意。横向表示同层互联，纵向表示从下一层组合到上一层的系统构成关系。该图基于公开资料抽象，侧重说明结构关系而非芯片引脚或交换端口级实现细节。
 ///
 
-![](imgs/cloudmatrix384-system-architecture.png)
+![](imgs/cloudmatrix384-system-architecture.png){width="1000px"}
 /// caption
 图：CloudMatrix 384 结构示意图之一。图中展示了计算节点、交换平面与整机级互联之间的对应关系。
 ///
 
-![](imgs/cloudmatrix384-cabinet-topology.png)
+![](imgs/cloudmatrix384-cabinet-topology.png){width="1000px"}
 /// caption
 图：CloudMatrix 384 结构示意图之二。图中展示了多计算柜与通信柜共同构成二层 UB 互联平面的方式。
 ///
@@ -96,6 +97,8 @@ block-beta
 
 ## 技术架构
 
+在理解了 CloudMatrix 384 的整体规格后，其关键差异主要落在两个技术支点上：一是昇腾 910C 所代表的 NPU 架构与封装组织方式，二是从 HCCS 演进到 UB 灵衢所形成的多层 Scale-Up 互联体系。
+
 ### 昇腾 910C 与达芬奇架构
 
 CloudMatrix 384 的底层算力载体是昇腾 910C。现有资料通常将其描述为双 Die 封装的 AI 加速器，核心基于达芬奇（Da Vinci）架构，支持 FP32、FP16、BF16、INT8 等多种精度，并延续了昇腾系列以 Cube、Vector、Scalar 为核心的 AI Core 设计。
@@ -114,7 +117,6 @@ CloudMatrix 384 的底层算力载体是昇腾 910C。现有资料通常将其�
 
 这类架构的特点是对矩阵运算路径做了较强专用化，能够在 BF16/FP16 等 AI 主流精度上提供较高吞吐；相应地，软件栈也需要围绕其存储层次和算子编译方式做针对性优化，因此对编译器、算子库和运行时的依赖更强。
 
-在理解了 CloudMatrix 384 的整体规格后，其关键差异主要落在两个技术支点上：一是昇腾 910C 所代表的 NPU 架构与封装组织方式，二是从 HCCS 演进到 UB 灵衢所形成的多层 Scale-Up 互联体系。
 
 ### 从 HCCS 到 UB 灵衢
 

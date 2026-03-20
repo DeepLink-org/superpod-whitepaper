@@ -73,8 +73,8 @@
 |           | 物理层                                                                                                                                                                            | 链路层                                                                                                                                                                          | 事务层                                                                                                                                                                                                 |
 |-----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Die内通信 | 自定义的金属走线<br>使用数字信号                                                                                                                                                  | NoC网络<br>包含路由算法的定义<br>流控机制和数据包定义                                                                                                                           | 片上总线协议，比如<br>AMBA AXI和AMBA CHI                                                                                                                                                                |
-| Die间通信 | - **BoW (Bunch of Wires)**：OCP定义的简化的die-to-die互连物理层协议<br>- **UCIe PHY**：UCIe的物理层规范<br>- 私有规范，比如AMD Infinity Fabric PHY, Intel AIB/Foveros PHY            | **UCIe D2D Adapter**: 负责链路训练、管理、CRC校验、重传机制<br>**私有实现**: AMD/Intel的私有链路管理逻辑                                                                           | **私有实现**: AMD Infinity Fabric Protocol (支持一致性)<br>**UCIe Protocol Layer**: 承载 **PCIe**, **CXL**, 和其他原生流协议(Streaming)                                                                |
-| 片间通信  | - **CEI**: OIF制定的高速电气I/O规范，包含25.6G/56G/112G等多种规范<br>- **PCIe PHY**: 遵循或参考CEI<br>- **NVLink PHY**: NVIDIA私有SerDes实现<br>- **以太网PHY**: 如以太网光/电模块 | **PCIe Link Layer**: 流量控制、ACK/NAK、数据包排序<br>**CXL.io Link Layer**: 复用PCIe的链路层<br>**NVLink Link Layer**: NVIDIA私有链路管理和流控<br>**Ethernet MAC Layer / RoCE** | **PCIe Transaction Layer**: 内存读写(RW)、配置、消息<br>**CXL (.cache & .mem)**: 实现缓存一致性、内存扩展<br>**NVLink Protocol**: GPU间P2P内存访问、原子操作<br>**TCP/IP, RoCEv2**: 基于以太网的应用层协议<br>**SUE-T**: 基于以太网的 Scale-Up 传输协议 |
+| Die间通信 |**BoW (Bunch of Wires)**：OCP定义的简化的die-to-die互连物理层协议<br> **UCIe PHY**：UCIe的物理层规范<br>- 私有规范，比如AMD Infinity Fabric PHY, Intel AIB/Foveros PHY            | **UCIe D2D Adapter**: 负责链路训练、管理、CRC校验、重传机制<br>**私有实现**: AMD/Intel的私有链路管理逻辑                                                                           | **私有实现**: AMD Infinity Fabric Protocol (支持一致性)<br>**UCIe Protocol Layer**: 承载 **PCIe**, **CXL**, 和其他原生流协议(Streaming)                                                                |
+| 片间通信  | **CEI**: OIF制定的高速电气I/O规范，包含25.6G/56G/112G等多种规范<br> **PCIe PHY**: 遵循或参考CEI<br> **NVLink PHY**: NVIDIA私有SerDes实现<br> **以太网PHY**: 如以太网光/电模块 | **PCIe Link Layer**: 流量控制、ACK/NAK、数据包排序<br>**CXL.io Link Layer**: 复用PCIe的链路层<br>**NVLink Link Layer**: NVIDIA私有链路管理和流控<br>**Ethernet MAC Layer / RoCE** | **PCIe Transaction Layer**: 内存读写(RW)、配置、消息<br>**CXL (.cache & .mem)**: 实现缓存一致性、内存扩展<br>**NVLink Protocol**: GPU间P2P内存访问、原子操作<br>**TCP/IP, RoCEv2**: 基于以太网的应用层协议<br>**SUE-T**: 基于以太网的 Scale-Up 传输协议 |
 
 ## 大模型对协议的重塑
 
@@ -109,19 +109,19 @@
 
 当前 Scale-Up 域的互联协议可以沿两个维度划分：**技术路线**（总线类 / 以太类 / 专有互联）与**开放程度**（封闭私有 / 准开放 / 完全开放标准）。下表给出产业界主要 Scale-Up 协议的全景：【事实】
 
-| # | 协议 | 主导方 | 物理层 | 链路层 | 事务层 | 组网规模 |
+| #  | 协议 | 主导方<div style="width: 120px;">  | 物理层 <div style="width: 120px;">| 链路层 <div style="width: 40px;">| 事务层 <div style="width: 150px;">| 组网规模 |
 |:--|:-----|:-------|:-------|:-------|:-------|:---------|
 | 1 | **NVLink** | NVIDIA | 私有 SerDes | 自定义 Flit | 内存语义 | 单层，≤576 |
 | 2 | **Infinity Fabric** | AMD | 私有 SerDes | 自定义 Flit | 内存语义 | 单层，≤16 |
-| 3 | **UALink** | AMD/Intel/Google 等 | 以太网 PHY 或 PCIe PHY | 自定义 Flit 或 PCIe Flit | 内存语义 | 单层，≤1024 |
+| 3 | **UALink** | AMD/Intel/<br>Google 等 | 以太网 PHY  <br> 或 PCIe PHY | 自定义 Flit <br>或 PCIe Flit | 内存语义 | 单层，≤1024 |
 | 4 | **UB 灵衢** | 华为 | 私有 | 自定义 Flit | 内存/消息语义 | 多层，万卡级 |
-| 5 | **HSL** | 海光 | 私有或 PCIe/以太 PHY | 自定义 Flit | 内存/消息语义 | 多层 |
+| 5 | **HSL** | 海光 | 私有或 <br>PCIe/以太 PHY | 自定义 Flit | 内存/消息语义 | 多层 |
 | 6 | **ALS** | 阿里云/信通院 | 以太网 PHY | 兼容 UALink | 内存/消息语义 | 多层，≤2000 |
-| 7 | **ESUN** | OCP (NVIDIA/Broadcom/Cisco) | 以太网 | 压缩头 + 以太网 + LLR/CBFC | 内存语义 | 单层，≤1024 |
-| 8 | **SUE-T** | Broadcom | 以太网 | NA | 内存语义，端到端重传 | 单层，≤1024 |
+| 7 | **ESUN** | OCP (NVIDIA/<br>Broadcom/Cisco) | 以太网 | 压缩头 + 以太网 + LLR/CBFC | 内存语义 | 单层，≤1024 |
+| 8 | **SUE-T** | Broadcom | 以太网 | NA | 内存语义，<br>端到端重传 | 单层，≤1024 |
 | 9 | **Eth-X** | 腾讯/信通院 (ODCC) | 以太网 | 自定义 | 内存/消息语义 | 单层，≤512 |
 | 10 | **Ether-Link** | 字节跳动 | 以太网 | OEFH 压缩头 + LLR/CBFC | 内存/消息语义 | 单层 |
-| 11 | **高通量 Eth+** | 阿里云/中科院计算所 | 以太网 | 自定义 | 内存/消息语义 | 多层，≤1024 |
+| 11 | **高通量 Eth+** | 阿里云/<br>中科院计算所 | 以太网 | 自定义 | 内存/消息语义 | 多层，≤1024 |
 | 12 | **OISA** | 中国移动/盛科 | 以太网 | 自定义 | 内存/消息语义 | 单层，≤512 |
 | 13 | **CLink** | 电子四院/中兴 | 以太网 | 自定义 | 内存/消息语义 | 单层，≤1024 |
 
@@ -317,7 +317,7 @@ CLink 由电子四院（中国电子技术标准化研究院）会同北京市�
 
 以太型 Scale-Up 协议与总线型 Scale-Up 协议在工程取舍上存在系统性差异。下表以两条路线中具有代表性的方案（SUE / UALink-200G）为例，对比关键设计决策：
 
-| 维度 | SUE (112G/224G) | UALink-200G |
+| 维度 <div style="width: 120px;">  | SUE (112G/224G) | UALink-200G |
 |:-----|:----------------|:------------|
 | 单 Lane 速率 | 112G / 224G | 112G / 224G |
 | 物理层协议 | 以太协议，IEEE 802.3 | 以太协议，IEEE 802.3 |

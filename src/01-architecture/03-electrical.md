@@ -37,7 +37,7 @@
 
 常见端口速率及其对应的 `Lane` 数、`FEC` 模式、调制方式和单 `Lane` 速率关系如下：
 
-| Port Speed | Physical Lanes | FEC Mode | Signaling Mode | SerDes Lane Bit Rate |
+| Port Speed | Physical Lanes | <div style="width: 280px; word-wrap: break-word;">FEC Mode | <div style="width: 320px; word-wrap: break-word;"> Signaling Mode | <div style="width: 280px; word-wrap: break-word;"> SerDes Lane Bit Rate |
 |:-----------|:---------------|:---------|:---------------|:---------------------|
 | `1.6Tb/s` | `8` | `RS(544,514)` / `RS(272,257)` | `106.25GBd PAM4` / `112GBd PAM4` | `212.5Gb/s` / `224Gb/s` |
 | `800Gb/s` | `4` | `RS(544,514)` / `RS(272,257)` | `106.25GBd PAM4` / `112GBd PAM4` | `212.5Gb/s` / `224Gb/s` |
@@ -59,7 +59,7 @@
 
 ![物理层结构](imgs/phy-layer-architecture.png)
 /// caption
-图 1-1 物理层结构。
+图 1-1：物理层结构。
 ///
 
 `PCS` 主要完成数据的编码与解码，并进行错误检测与纠正，确保物理层数据传输的完整性与可靠性；`PMA` 负责数据的串行化与并行化转换，集成 `SerDes`、发送/接收缓冲、时钟发生与时钟恢复电路等功能；`PMD` 则将 `PMA` 处理后的数据流转换为适配特定物理介质的传输信号，实现物理层与介质之间的正确连接与可靠通信。
@@ -70,7 +70,7 @@
 
 ![发送方向流程](imgs/phy-pcs-tx-flow.png){: style="display:inline-block; width:48%; vertical-align:top" } ![接收方向流程](imgs/phy-pcs-rx-flow.png){: style="display:inline-block; width:48%; vertical-align:top" }
 /// caption
-图 1-2、图 1-3 分别给出 `PCS` 在发送方向和接收方向的处理流程。
+图 1-2、图 1-3：给出 `PCS` 在发送方向（左）和接收方向（右）的处理流程。
 ///
 
 发送方向主要包括：
@@ -129,7 +129,7 @@
 
 常见的接口速率和类型如下，其中 `224Gb/s` / `212.5Gb/s` 对应接口类型和 `1.6T` 相关类型仍在持续完善中：
 
-| 接口速率 | 类型 |
+| <div style="width: 200px; word-wrap: break-word;">接口速率 | 类型 |
 |:---------|:-----|
 | `50GBASE-R Family` | `50GBASE-CR`、`50GBASE-KR`、`50GBASE-SR` |
 | `100GBASE-R Family` | `100GBASE-CR2`、`100GBASE-CR4`、`100GBASE-DR`、`100GBASE-KP4`、`100GBASE-KR2`、`100GBASE-KR4`、`100GBASE-SR2`、`100GBASE-SR4` |
@@ -164,14 +164,14 @@
 
 ![发送端 TP0v 测试点示意图](imgs/phy-tp0v-test-point.png){: style="display:inline-block; width:48%; vertical-align:top" } ![接收端 TP5v 测试点示意图](imgs/phy-tp5v-test-point.png){: style="display:inline-block; width:48%; vertical-align:top" }
 /// caption
-图 1-6、图 1-7 给出发送端 `TP0v` 与接收端 `TP5v` 的测试点示意图。原文中这一部分重点是说明一致性验证依赖标准测试位置和对应表项，而不是仅凭接口名义速率判断链路能力。
+图 1-6、图 1-7 给出发送端 `TP0v`（左） 与接收端 `TP5v`（右） 的测试点示意图。原文中这一部分重点是说明一致性验证依赖标准测试位置和对应表项，而不是仅凭接口名义速率判断链路能力。
 ///
 
 ### 驱动能力
 
 根据不同信号速率，`SerDes` 需要具备不同的驱动能力以及对串扰、反射干扰的不敏锐性。这里支持的损耗是从 `Bump` 到 `Bump` 之间的通道计算，并在参考 `IEEE TP0` 到 `TP5` 通道损耗要求基础上叠加封装损耗和额外余量后，仍需满足 `BER <= 1e-6`。
 
-| 信号速率 | 基频频点 | `TP0-TP5 / 双边 PKG` 损耗 | `BER < 1e-6` 时需支持的 `Bump-to-Bump` 损耗 |
+| <div style="width: 210px; word-wrap: break-word;">信号速率 | <div style="width: 200px; word-wrap: break-word;"> 基频频点 | `TP0-TP5 / 双边 PKG` 损耗 | `BER < 1e-6` 时需支持的 `Bump-to-Bump` 损耗 |
 |:---------|:---------|:--------------------------|:---------------------------------------------|
 | `28Gb/s`、`26.5625Gb/s` | `14GHz`、`13.28125GHz` | `35dB / 5dB` | `42dB` |
 | `56Gb/s`、`53.125Gb/s` | `14GHz`、`13.28125GHz` | `30dB / 5dB` | `37dB` |
@@ -248,27 +248,27 @@ Broadcom 的高端交换芯片通常两年一代，交换容量翻倍。从芯�
 
 `PCIe` 是最早也是最基础的 GPU 互联方式。多数国产 GPU 在基础配置中采用 `PCIe 5.0 x16`（单向 `63 GB/s`）作为底线互联，同时叠加自研桥接技术提升卡间带宽：
 
-| 厂商 | 产品 | PCIe 版本 | 自研互联 | 卡间带宽 | 最大单节点卡数 |
+| 厂商 | 产品 | PCIe 版本 | 自研互联 | <div style="width: 240px; word-wrap: break-word;"> 卡间带宽 | 最大单节点卡数 |
 |:-----|:-----|:----------|:---------|:---------|:---------------|
-| 摩尔线程 | `MTT S4000` | `PCIe 5.0 x16` | `MTLink` 桥接 | `PCIe: 63 GB/s; MTLink: 240 GB/s` | `8` 卡 |
-| 壁仞科技 | `BR100` 系列 | `PCIe 5.0 x16`（支持 `CXL`） | `BLink +` 桥片 | `PCIe: 63 GB/s; BLink: 448 GB/s` | `8` 卡 |
-| 海光 | `DCU K100` | `PCIe 5.0 x16` | `xGMI` 协议 | `PCIe: 63 GB/s; xGMI: 184 GB/s` | `8` 卡 |
-| 寒武纪 | `MLU370-X8` | `PCIe 4.0 x16` | `MLU-Link` 桥接卡 | `PCIe: 31.5 GB/s; MLU-Link: 200 GB/s` | `8` 卡 |
-| 沐曦科技 | `曦思 C600` | `PCIe 5.0 x16` | `MetaXLink` | `PCIe: 63 GB/s; MetaXLink: >1 TB/s` | `8` 卡 |
-| 华为昇腾 | `Atlas 300T A2` | `PCIe 4.0 x16` | `HCCS` | `PCIe: 31.5 GB/s; HCCS: 2 TB/s` | `8` 卡 |
+| 摩尔线程 | `MTT S4000` | `PCIe 5.0 x16` | `MTLink` 桥接 | <code>PCIe: 63 GB/s;<br>MTLink: 240 GB/s</code> | `8` 卡 |
+| 壁仞科技 | `BR100` 系列 | `PCIe 5.0 x16`（支持 `CXL`） | `BLink +` 桥片 | <code>PCIe: 63 GB/s; <br>BLink: 448 GB/s</code> | `8` 卡 |
+| 海光 | `DCU K100` | `PCIe 5.0 x16` | `xGMI` 协议 | <code>PCIe: 63 GB/s; <br>xGMI: 184 GB/s</code> | `8` 卡 |
+| 寒武纪 | `MLU370-X8` | `PCIe 4.0 x16` | `MLU-Link` 桥接卡 | <code>PCIe: 31.5 GB/s; <br>MLU-Link: 200 GB/s</code> | `8` 卡 |
+| 沐曦科技 | `曦思 C600` | `PCIe 5.0 x16` | `MetaXLink` | <code>PCIe: 63 GB/s; <br>MetaXLink: >1 TB/s</code> | `8` 卡 |
+| 华为昇腾 | `Atlas 300T A2` | `PCIe 4.0 x16` | `HCCS` | <code>PCIe: 31.5 GB/s; <br>HCCS: 2 TB/s</code> | `8` 卡 |
 
 ### `SerDes` 点对点互联
 
 `SerDes` 直连是第二代 GPU 互联方式，一般采用 `PAM4 56G` 或 `112G`，无需交换芯片，性能主要由 `SerDes` 带宽和数量决定。其局限在于一经设计完成便难以继续扩展，通常主要实现单机 `8` 卡环境：
 
-| 厂商 / 产品 | SerDes 规格 | 互联规模 | 核心带宽 / 延迟 | 拓扑 | 封装 | 功耗 |
+| 厂商 / 产品 <div style="width: 150px;"> | SerDes 规格 <div style="width: 120px;"> | 互联规模 <div style="width: 160px;">| 核心带宽 / 延迟 <div style="width: 260px;"> | 拓扑 <div style="width: 160px;"> | 封装 <div style="width: 160px;"> | 功耗 <div style="width: 100px;"> |
 |:------------|:------------|:---------|:----------------|:-----|:-----|:-----|
-| 寒武纪 `思元 290`（`MLU-Link V1`） | `56G PAM4` | `8` 卡全互联 | 总带宽 `600 GB/s`; `<100 ns` | `Mesh` 全互联 | `2.5D + CoWoS` | `300W` |
-| 寒武纪 `思元 370`（`MLU-Link V2`） | `112G PAM4` | `4-8` 卡全互联 | 双向 `200 GB/s`; `<80 ns` | `Mesh +` 星型 | `Chiplet` 四芯粒 | `280W` |
-| 壁仞 `BR100`（`BLink`） | `112G PAM4` | `8` 卡 `OAM` 全互联 | `D2D: 896 GB/s (<1 ns); 8卡: 512 GB/s` | `Mesh + 3D Mesh` | `2.5D +` 硅中介层 | `350W` |
-| 华为昇腾 `910B`（`CloudMatrix`） | `112G -> 224G PAM4` | `16` 卡到千卡级 | 卡间 `400 GB/s+`; 百 `ns` 级 | `Mesh + Torus + 3D Mesh` | `CoWoS` | `310W` |
-| 燧原 `L600`（`GC-Link`） | `112G PAM4` | `8` 卡环形 `Mesh` | `384 GB/s; <150 ns` | `8` 卡环形 `Mesh` | `2.5D` | `280W` |
-| 沐曦 `MX1`（`MX-Link`） | `112G PAM4` | `8` 卡混合拓扑 | `448 GB/s; <120 ns` | `Mesh +` 星型 | `2.5D + CoWoS` | `320W` |
+| 寒武纪 `思元 290`<br>（`MLU-Link V1`） | `56G PAM4` | `8` 卡全互联 | 总带宽 `600 GB/s`; `<100 ns` | `Mesh` 全互联 | `2.5D + CoWoS` | `300W` |
+| 寒武纪 `思元 370`<br>（`MLU-Link V2`） | `112G PAM4` | `4-8` 卡全互联 | 双向 `200 GB/s`; `<80 ns` | `Mesh +` 星型 | `Chiplet` 四芯粒 | `280W` |
+| 壁仞 `BR100`<br>（`BLink`） | `112G PAM4` | `8` 卡 `OAM` 全互联 | D2D: `896 GB/s` (`<1 ns`); <br> 8卡: `512 GB/s` | `Mesh + 3D Mesh` | `2.5D +` 硅中介层 | `350W` |
+| 华为昇腾 `910B`<br>（`CloudMatrix`） | <code>112G -> <br>224G PAM4</code> | `16` 卡到千卡级 | 卡间 `400 GB/s+`; 百 `ns` 级 | `Mesh + Torus + 3D Mesh` | `CoWoS` | `310W` |
+| 燧原 `L600`<br>（`GC-Link`） | `112G PAM4` | `8` 卡环形 `Mesh` | `384 GB/s; <150 ns` | `8` 卡环形 `Mesh` | `2.5D` | `280W` |
+| 沐曦 `MX1`<br>（`MX-Link`） | `112G PAM4` | `8` 卡混合拓扑 | `448 GB/s; <120 ns` | `Mesh +` 星型 | `2.5D + CoWoS` | `320W` |
 
 ### 交换芯片互联
 
