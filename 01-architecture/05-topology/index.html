@@ -1,260 +1,133 @@
-
-<!doctype html>
-<html lang="zh" class="no-js">
-  <head>
-    
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width,initial-scale=1">
-      
-        <meta name="description" content="面向下一代模型的 AI 超节点技术白皮书">
-      
-      
-      
-        <link rel="canonical" href="https://deeplink.org/superpod-whitepaper/01-architecture/05-topology/">
-      
-      
-        <link rel="prev" href="../04-protocols/">
-      
-      
-        <link rel="next" href="../06-system-architecture/">
-      
-      
-        
-      
-      
-      <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
-    
-    
-      
-        <title>🔒拓扑与组网 - 超节点技术白皮书</title>
-      
-    
-    
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
-      
-        
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
-      
-      
-
-
-    
-    
-      
-    
-    
-      
-    
-    
-      <link rel="stylesheet" href="../../css/heti.css">
-    
-      <link rel="stylesheet" href="../../assets/stylesheets/custom.css">
-    
-      <link rel="stylesheet" href="../../assets/stylesheets/home.css">
-    
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
-    
-      
-
-    
-    
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  </head>
-  
-  
-    
-    
-      
-    
-    
-    
-    
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
-  
-    
-    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
-    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
-    <label class="md-overlay" for="__drawer"></label>
-    <div data-md-component="skip">
-      
-        
-        <a href="#_2" class="md-skip">
+<!DOCTYPE html>
+<html class="no-js" lang="zh">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="面向下一代模型的 AI 超节点技术白皮书" name="description"/>
+<link href="https://deeplink.org/superpod-whitepaper/01-architecture/05-topology/" rel="canonical"/>
+<link href="../04-protocols/" rel="prev"/>
+<link href="../06-system-architecture/" rel="next"/>
+<link href="../../assets/images/favicon.png" rel="icon"/>
+<meta content="mkdocs-1.6.1, mkdocs-material-9.7.6" name="generator"/>
+<title>拓扑与组网 - 超节点技术白皮书</title>
+<link href="../../assets/stylesheets/main.484c7ddc.min.css" rel="stylesheet"/>
+<link href="../../assets/stylesheets/palette.ab4e12ef.min.css" rel="stylesheet"/>
+<link href="../../css/heti.css" rel="stylesheet"/>
+<link href="../../assets/stylesheets/custom.css" rel="stylesheet"/>
+<link href="../../assets/stylesheets/home.css" rel="stylesheet"/>
+<script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&amp;family=Noto+Sans+SC:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+</head>
+<body data-md-color-accent="custom" data-md-color-primary="custom" data-md-color-scheme="default" dir="ltr">
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#_2">
           跳转至
         </a>
-      
-    </div>
-    <div data-md-component="announce">
-      
-    </div>
-    
-    
-      
-
+</div>
+<div data-md-component="announce">
+</div>
 <header class="md-header" data-md-component="header">
-  <nav class="md-header__inner md-grid" aria-label="页眉">
-    <a href="../.." title="超节点技术白皮书" class="md-header__button md-logo" aria-label="超节点技术白皮书" data-md-component="logo">
-      
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
-
-    </a>
-    <label class="md-header__button md-icon" for="__drawer">
-      
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
-    </label>
-    <div class="md-header__title" data-md-component="header-title">
-      <div class="md-header__ellipsis">
-        <div class="md-header__topic">
-          <span class="md-ellipsis">
+<nav aria-label="页眉" class="md-header__inner md-grid">
+<a aria-label="超节点技术白皮书" class="md-header__button md-logo" data-md-component="logo" href="../.." title="超节点技术白皮书">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
             超节点技术白皮书
           </span>
-        </div>
-        <div class="md-header__topic" data-md-component="header-topic">
-          <span class="md-ellipsis">
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
             
-              🔒拓扑与组网
+              拓扑与组网
             
           </span>
-        </div>
-      </div>
-    </div>
-    
-      
-        <form class="md-header__option" data-md-component="palette">
-  
-    
-    
-    
-    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="切换至深色模式"  type="radio" name="__palette" id="__palette_0">
-    
-      <label class="md-header__button md-icon" title="切换至深色模式" for="__palette_1" hidden>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
-      </label>
-    
-  
-    
-    
-    
-    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="切换至浅色模式"  type="radio" name="__palette" id="__palette_1">
-    
-      <label class="md-header__button md-icon" title="切换至浅色模式" for="__palette_0" hidden>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
-      </label>
-    
-  
+</div>
+</div>
+</div>
+<form class="md-header__option" data-md-component="palette">
+<input aria-label="切换至深色模式" class="md-option" data-md-color-accent="custom" data-md-color-media="" data-md-color-primary="custom" data-md-color-scheme="default" id="__palette_0" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_1" hidden="" title="切换至深色模式">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+</label>
+<input aria-label="切换至浅色模式" class="md-option" data-md-color-accent="custom" data-md-color-media="" data-md-color-primary="custom" data-md-color-scheme="slate" id="__palette_1" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_0" hidden="" title="切换至浅色模式">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+</label>
 </form>
-      
-    
-    
-      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
-    
-    
-    
-      
-      
-        <label class="md-header__button md-icon" for="__search">
-          
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
-        </label>
-        <div class="md-search" data-md-component="search" role="dialog">
-  <label class="md-search__overlay" for="__search"></label>
-  <div class="md-search__inner" role="search">
-    <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
-      <label class="md-search__icon md-icon" for="__search">
-        
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
-        
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
-      </label>
-      <nav class="md-search__options" aria-label="查找">
-        
-          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
-            
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
-          </a>
-        
-        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
-          
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-        </button>
-      </nav>
-      
-    </form>
-    <div class="md-search__output">
-      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
-        <div class="md-search-result" data-md-component="search-result">
-          <div class="md-search-result__meta">
+<script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+<label class="md-header__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="搜索" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="搜索" required="" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+</label>
+<nav aria-label="查找" class="md-search__options">
+<a aria-label="分享" class="md-search__icon md-icon" data-clipboard="" data-clipboard-text="" data-md-component="search-share" href="javascript:void(0)" tabindex="-1" title="分享">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"></path></svg>
+</a>
+<button aria-label="清空当前内容" class="md-search__icon md-icon" tabindex="-1" title="清空当前内容" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+</button>
+</nav>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="" tabindex="0">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
             正在初始化搜索引擎
           </div>
-          <ol class="md-search-result__list" role="presentation"></ol>
-        </div>
-      </div>
-    </div>
-  </div>
+<ol class="md-search-result__list" role="presentation"></ol>
 </div>
-      
-    
-    
-      <div class="md-header__source">
-        <a href="https://github.com/DeepLink-org/superpod-whitepaper" title="前往仓库" class="md-source" data-md-component="source">
-  <div class="md-source__icon md-icon">
-    
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
-  </div>
-  <div class="md-source__repository">
+</div>
+</div>
+</div>
+</div>
+<div class="md-header__source">
+<a class="md-source" data-md-component="source" href="https://github.com/DeepLink-org/superpod-whitepaper" title="前往仓库">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+</div>
+<div class="md-source__repository">
     superpod-whitepaper
   </div>
 </a>
-      </div>
-    
-  </nav>
-  
+</div>
+</nav>
 </header>
-    
-    <div class="md-container" data-md-component="container">
-      
-      
-        
-          
-            
-<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
-  <div class="md-grid">
-    <ul class="md-tabs__list">
-      
-        
-  
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../.." class="md-tabs__link">
+<div class="md-container" data-md-component="container">
+<nav aria-label="标签" class="md-tabs" data-md-component="tabs">
+<div class="md-grid">
+<ul class="md-tabs__list">
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../..">
         
   
   
     
   
-  🔒首页
+  首页
 
       </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../../00-preface/" class="md-tabs__link">
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../00-preface/">
           
   
   
@@ -263,22 +136,9 @@
   前言
 
         </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-  
-    
-  
-  
-    
-    
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+</li>
+<li class="md-tabs__item md-tabs__item--active">
+<a class="md-tabs__link" href="../">
           
   
   
@@ -287,20 +147,9 @@
   架构分析
 
         </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../../02-software/" class="md-tabs__link">
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../02-software/">
           
   
   
@@ -309,20 +158,9 @@
   软件系统
 
         </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../../03-simulation/" class="md-tabs__link">
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../03-simulation/">
           
   
   
@@ -331,20 +169,9 @@
   建模仿真
 
         </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../../04-reference-designs/" class="md-tabs__link">
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../04-reference-designs/">
           
   
   
@@ -353,20 +180,9 @@
   参考设计
 
         </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../../05-future/" class="md-tabs__link">
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../05-future/">
           
   
   
@@ -375,20 +191,9 @@
   未来演进
 
         </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../../06-conclusion/" class="md-tabs__link">
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../06-conclusion/">
           
   
   
@@ -397,39 +202,20 @@
   结语与附录
 
         </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../00-version-history/" class="md-tabs__link">
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../00-version-history/">
         
   
   
     
   
-  🔒版本历史
+  版本历史
 
       </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../../contributing/" class="md-tabs__link">
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../contributing/">
           
   
   
@@ -438,20 +224,9 @@
   参与方式
 
         </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../../07-spi/" class="md-tabs__link">
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../07-spi/">
           
   
   
@@ -460,128 +235,49 @@
   产业协同与 SPI 筹备
 
         </a>
-      </li>
-    
-  
-
-      
-    </ul>
-  </div>
+</li>
+</ul>
+</div>
 </nav>
-          
-        
-      
-      <main class="md-main" data-md-component="main">
-        <div class="md-main__inner md-grid">
-          
-            
-              
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-
-
-  
-
-
-  
-
-<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="导航栏" data-md-level="0">
-  <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="超节点技术白皮书" class="md-nav__button md-logo" aria-label="超节点技术白皮书" data-md-component="logo">
-      
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
-
-    </a>
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="导航栏" class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="超节点技术白皮书" class="md-nav__button md-logo" data-md-component="logo" href="../.." title="超节点技术白皮书">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+</a>
     超节点技术白皮书
   </label>
-  
-    <div class="md-nav__source">
-      <a href="https://github.com/DeepLink-org/superpod-whitepaper" title="前往仓库" class="md-source" data-md-component="source">
-  <div class="md-source__icon md-icon">
-    
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
-  </div>
-  <div class="md-source__repository">
+<div class="md-nav__source">
+<a class="md-source" data-md-component="source" href="https://github.com/DeepLink-org/superpod-whitepaper" title="前往仓库">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+</div>
+<div class="md-source__repository">
     superpod-whitepaper
   </div>
 </a>
-    </div>
-  
-  <ul class="md-nav__list" data-md-scrollfix>
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../..">
+<span class="md-ellipsis">
     
   
-    🔒首页
+    首页
   
 
     
   </span>
-  
-    
-  
-  
-    <span class="md-status md-status--encrypted"></span>
-  
-
-  
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
-        
-          
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+<span class="md-ellipsis">
     
   
     前言
@@ -589,132 +285,50 @@
 
     
   </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2">
-            <span class="md-nav__icon md-icon"></span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_2">
+<span class="md-nav__icon md-icon"></span>
             
   
     前言
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../00-preface/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../00-preface/">
+<span class="md-ellipsis">
     
   
-    🔒前言
+    前言
   
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../00-editorial-board/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../00-editorial-board/">
+<span class="md-ellipsis">
     
   
-    🔒编写委员会
+    编写委员会
   
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-    
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-        
-        
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_3" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="../">
+<span class="md-ellipsis">
     
   
     架构分析
@@ -722,70 +336,25 @@
 
     
   </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_3">
-            <span class="md-nav__icon md-icon"></span>
+</a>
+<label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+<span class="md-nav__icon md-icon"></span>
+</label>
+</div>
+<nav aria-expanded="true" aria-labelledby="__nav_3_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_3">
+<span class="md-nav__icon md-icon"></span>
             
   
     架构分析
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-          
-          
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_2" >
-        
-          
-          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="">
-            
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--section md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_3_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="">
+<span class="md-ellipsis">
     
   
     产品实践
@@ -793,128 +362,49 @@
 
     
   </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_2">
-            <span class="md-nav__icon md-icon"></span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_3_2_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_3_2">
+<span class="md-nav__icon md-icon"></span>
             
   
     产品实践
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../01-nvidia/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../01-nvidia/">
+<span class="md-ellipsis">
     
   
-    🔒NVIDIA 超节点
+    NVIDIA 超节点
   
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../02-huawei/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../02-huawei/">
+<span class="md-ellipsis">
     
   
-    🔒华为超节点
+    华为超节点
   
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-    
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-          
-          
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" checked>
-        
-          
-          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="">
-            
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_3_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="">
+<span class="md-ellipsis">
     
   
     技术基础
@@ -922,413 +412,255 @@
 
     
   </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_3_3">
-            <span class="md-nav__icon md-icon"></span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="true" aria-labelledby="__nav_3_3_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_3_3">
+<span class="md-nav__icon md-icon"></span>
             
   
     技术基础
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../03-electrical/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../03-electrical/">
+<span class="md-ellipsis">
     
   
-    🔒物理层与电气接口
+    物理层与电气接口
   
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../04-protocols/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../04-protocols/">
+<span class="md-ellipsis">
     
   
-    🔒链路层与事务协议
+    链路层与事务协议
   
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
+</a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+<span class="md-ellipsis">
     
   
-  
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    🔒拓扑与组网
+    拓扑与组网
   
 
     
   </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
-        
-  
-  
-  <span class="md-ellipsis">
+<span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+<span class="md-ellipsis">
     
   
-    🔒拓扑与组网
+    拓扑与组网
   
 
     
   </span>
-  
-  
-
-      </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目录">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
+</a>
+<nav aria-label="目录" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
       目录
     </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#_2">
+<span class="md-ellipsis">
       
         拓扑关键指标
       
     </span>
-  </a>
-  
+</a>
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#_3">
+<span class="md-ellipsis">
       
         常见拓扑
       
     </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="常见拓扑">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#full-mesh" class="md-nav__link">
-    <span class="md-ellipsis">
+</a>
+<nav aria-label="常见拓扑" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#full-mesh">
+<span class="md-ellipsis">
       
         全互联（Full Mesh）
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#clos" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#clos">
+<span class="md-ellipsis">
       
         Clos（多级交换网络）
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#_4">
+<span class="md-ellipsis">
       
         新型拓扑
       
     </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="新型拓扑">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#dragonfly" class="md-nav__link">
-    <span class="md-ellipsis">
+</a>
+<nav aria-label="新型拓扑" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#dragonfly">
+<span class="md-ellipsis">
       
         Dragonfly
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#dragonfly_1" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#dragonfly_1">
+<span class="md-ellipsis">
       
         Dragonfly+
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#3d-torus" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#3d-torus">
+<span class="md-ellipsis">
       
         3D Torus
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#slimfly" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#slimfly">
+<span class="md-ellipsis">
       
         SlimFly
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#_6">
+<span class="md-ellipsis">
       
         拓扑性能对比
       
     </span>
-  </a>
-  
+</a>
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#_7">
+<span class="md-ellipsis">
       
         交换与控制技术
       
     </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="交换与控制技术">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#nvswitch" class="md-nav__link">
-    <span class="md-ellipsis">
+</a>
+<nav aria-label="交换与控制技术" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#nvswitch">
+<span class="md-ellipsis">
       
         NVSwitch
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#infiniband-asic" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#infiniband-asic">
+<span class="md-ellipsis">
       
         以太网 / InfiniBand 交换 ASIC
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#ocs" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#ocs">
+<span class="md-ellipsis">
       
         光学电路交换（OCS）
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#_8">
+<span class="md-ellipsis">
       
         路由与拥塞控制
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#fabric" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#fabric">
+<span class="md-ellipsis">
       
         专用 Fabric
       
     </span>
-  </a>
-  
+</a>
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#_9">
+<span class="md-ellipsis">
       
         从堆叠链路到弹性稀疏
       
     </span>
-  </a>
-  
+</a>
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#_10">
+<span class="md-ellipsis">
       
         参考文献
       
     </span>
-  </a>
-  
+</a>
 </li>
-      
-    </ul>
-  
+</ul>
 </nav>
-      
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-          
-          
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_4" >
-        
-          
-          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="">
-            
-  
-  
-  <span class="md-ellipsis">
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--section md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_3_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="">
+<span class="md-ellipsis">
     
   
     系统实现
@@ -1336,35 +668,21 @@
 
     
   </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_4">
-            <span class="md-nav__icon md-icon"></span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_3_4_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_3_4">
+<span class="md-nav__icon md-icon"></span>
             
   
     系统实现
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../06-system-architecture/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../06-system-architecture/">
+<span class="md-ellipsis">
     
   
     系统架构
@@ -1372,27 +690,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../07-server-architecture/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../07-server-architecture/">
+<span class="md-ellipsis">
     
   
     整机工程
@@ -1400,75 +702,19 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../02-software/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_4" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="../../02-software/">
+<span class="md-ellipsis">
     
   
     软件系统
@@ -1476,69 +722,25 @@
 
     
   </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4">
-            <span class="md-nav__icon md-icon"></span>
+</a>
+<label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+<span class="md-nav__icon md-icon"></span>
+</label>
+</div>
+<nav aria-expanded="false" aria-labelledby="__nav_4_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_4">
+<span class="md-nav__icon md-icon"></span>
             
   
     软件系统
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_2" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_4_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+<span class="md-ellipsis">
     
   
     统一访存
@@ -1546,35 +748,21 @@
 
     
   </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_2">
-            <span class="md-nav__icon md-icon"></span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_4_2_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_4_2">
+<span class="md-nav__icon md-icon"></span>
             
   
     统一访存
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../02-software/hw-memory-foundations/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../02-software/hw-memory-foundations/">
+<span class="md-ellipsis">
     
   
     硬件内存语义
@@ -1582,27 +770,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../02-software/memory-semantics/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../02-software/memory-semantics/">
+<span class="md-ellipsis">
     
   
     软件访存机制
@@ -1610,27 +782,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../02-software/memory-pooling/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../02-software/memory-pooling/">
+<span class="md-ellipsis">
     
   
     内存池化技术
@@ -1638,59 +794,15 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_4_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+<span class="md-ellipsis">
     
   
     编程模型
@@ -1698,35 +810,21 @@
 
     
   </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_3">
-            <span class="md-nav__icon md-icon"></span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_4_3_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_4_3">
+<span class="md-nav__icon md-icon"></span>
             
   
     编程模型
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../02-software/ccl/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../02-software/ccl/">
+<span class="md-ellipsis">
     
   
     集合通信
@@ -1734,27 +832,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../02-software/shmem/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../02-software/shmem/">
+<span class="md-ellipsis">
     
   
     共享内存
@@ -1762,57 +844,15 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_4" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_4_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+<span class="md-ellipsis">
     
   
     RAS体系
@@ -1820,35 +860,21 @@
 
     
   </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_4">
-            <span class="md-nav__icon md-icon"></span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_4_4_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_4_4">
+<span class="md-nav__icon md-icon"></span>
             
   
     RAS体系
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../02-software/ras/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../02-software/ras/">
+<span class="md-ellipsis">
     
   
     RAS体系
@@ -1856,57 +882,15 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_5" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_4_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
+<span class="md-ellipsis">
     
   
     训推系统
@@ -1914,35 +898,21 @@
 
     
   </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_5">
-            <span class="md-nav__icon md-icon"></span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_4_5_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_4_5">
+<span class="md-nav__icon md-icon"></span>
             
   
     训推系统
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../02-software/train-infer/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../02-software/train-infer/">
+<span class="md-ellipsis">
     
   
     训推系统
@@ -1950,75 +920,19 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../03-simulation/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_5" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="../../03-simulation/">
+<span class="md-ellipsis">
     
   
     建模仿真
@@ -2026,43 +940,24 @@
 
     
   </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
-            <span class="md-nav__icon md-icon"></span>
+</a>
+<label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+<span class="md-nav__icon md-icon"></span>
+</label>
+</div>
+<nav aria-expanded="false" aria-labelledby="__nav_5_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_5">
+<span class="md-nav__icon md-icon"></span>
             
   
     建模仿真
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../03-simulation/2.workload_modeling/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../03-simulation/2.workload_modeling/">
+<span class="md-ellipsis">
     
   
     负载模型：定义需求侧的压力画像
@@ -2070,27 +965,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../03-simulation/3.system_simulation/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../03-simulation/3.system_simulation/">
+<span class="md-ellipsis">
     
   
     系统模型：映射与编排的推演引擎
@@ -2098,27 +977,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../03-simulation/coevolution/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../03-simulation/coevolution/">
+<span class="md-ellipsis">
     
   
     校准验证与共演进闭环
@@ -2126,27 +989,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../03-simulation/case-inference/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../03-simulation/case-inference/">
+<span class="md-ellipsis">
     
   
     方法论落地：异构推理架构的帕累托分析
@@ -2154,69 +1001,16 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../04-reference-designs/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_6" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="../../04-reference-designs/">
+<span class="md-ellipsis">
     
   
     参考设计
@@ -2224,43 +1018,24 @@
 
     
   </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6">
-            <span class="md-nav__icon md-icon"></span>
+</a>
+<label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+<span class="md-nav__icon md-icon"></span>
+</label>
+</div>
+<nav aria-expanded="false" aria-labelledby="__nav_6_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_6">
+<span class="md-nav__icon md-icon"></span>
             
   
     参考设计
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../04-reference-designs/standard-bus/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../04-reference-designs/standard-bus/">
+<span class="md-ellipsis">
     
   
     标准构型：总线全对等互联方案
@@ -2268,27 +1043,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../04-reference-designs/standard-ether/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../04-reference-designs/standard-ether/">
+<span class="md-ellipsis">
     
   
     标准构型：以太全对等互联方案
@@ -2296,27 +1055,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../04-reference-designs/dragonfly-ocs/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../04-reference-designs/dragonfly-ocs/">
+<span class="md-ellipsis">
     
   
     探索构型：Dragonfly + OCS 方案
@@ -2324,27 +1067,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../04-reference-designs/torus-ocs/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../04-reference-designs/torus-ocs/">
+<span class="md-ellipsis">
     
   
     探索构型：3D Torus + OCS 方案
@@ -2352,27 +1079,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../04-reference-designs/ring-docs/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../04-reference-designs/ring-docs/">
+<span class="md-ellipsis">
     
   
     探索构型：大环路 + 分布式 dOCS 方案
@@ -2380,65 +1091,16 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../05-future/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_7" type="checkbox"/>
+<div class="md-nav__link md-nav__container">
+<a class="md-nav__link" href="../../05-future/">
+<span class="md-ellipsis">
     
   
     未来演进
@@ -2446,69 +1108,25 @@
 
     
   </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_7">
-            <span class="md-nav__icon md-icon"></span>
+</a>
+<label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+<span class="md-nav__icon md-icon"></span>
+</label>
+</div>
+<nav aria-expanded="false" aria-labelledby="__nav_7_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_7">
+<span class="md-nav__icon md-icon"></span>
             
   
     未来演进
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7_2" >
-        
-          
-          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_7_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+<span class="md-ellipsis">
     
   
     互联技术演进
@@ -2516,35 +1134,21 @@
 
     
   </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_7_2">
-            <span class="md-nav__icon md-icon"></span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_7_2_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_7_2">
+<span class="md-nav__icon md-icon"></span>
             
   
     互联技术演进
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../05-future/interconnect/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../05-future/interconnect/">
+<span class="md-ellipsis">
     
   
     光互联与交换
@@ -2552,27 +1156,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../05-future/topology/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../05-future/topology/">
+<span class="md-ellipsis">
     
   
     先进互联拓扑演进
@@ -2580,27 +1168,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../05-future/bus/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../05-future/bus/">
+<span class="md-ellipsis">
     
   
     Scale-Up 总线与互联语义
@@ -2608,61 +1180,15 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_7_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+<span class="md-ellipsis">
     
   
     先进封装技术演进
@@ -2670,35 +1196,21 @@
 
     
   </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_7_3">
-            <span class="md-nav__icon md-icon"></span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_7_3_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_7_3">
+<span class="md-nav__icon md-icon"></span>
             
   
     先进封装技术演进
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../05-future/packaging/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../05-future/packaging/">
+<span class="md-ellipsis">
     
   
     光电互连封装（LPO/NPO/CPO）
@@ -2706,27 +1218,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../05-future/chiplet/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../05-future/chiplet/">
+<span class="md-ellipsis">
     
   
     Chiplet 多Die 集成（2.5D/3D）
@@ -2734,27 +1230,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../05-future/hbm/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../05-future/hbm/">
+<span class="md-ellipsis">
     
   
     堆叠内存技术（HBM/3D DRAM）
@@ -2762,65 +1242,15 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7_4" >
-        
-          
-          <label class="md-nav__link" for="__nav_7_4" id="__nav_7_4_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_7_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_7_4" id="__nav_7_4_label" tabindex="0">
+<span class="md-ellipsis">
     
   
     先进模型技术演进
@@ -2828,35 +1258,21 @@
 
     
   </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_7_4">
-            <span class="md-nav__icon md-icon"></span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_7_4_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_7_4">
+<span class="md-nav__icon md-icon"></span>
             
   
     先进模型技术演进
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../05-future/model-tech/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../05-future/model-tech/">
+<span class="md-ellipsis">
     
   
     模型技术演进总览
@@ -2864,27 +1280,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../05-future/low-precision/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../05-future/low-precision/">
+<span class="md-ellipsis">
     
   
     低精度数值格式
@@ -2892,27 +1292,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../05-future/long-context/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../05-future/long-context/">
+<span class="md-ellipsis">
     
   
     超长序列技术
@@ -2920,27 +1304,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../05-future/ultra-sparse/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../05-future/ultra-sparse/">
+<span class="md-ellipsis">
     
   
     超稀疏模型技术
@@ -2948,27 +1316,11 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../05-future/multimodal/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../05-future/multimodal/">
+<span class="md-ellipsis">
     
   
     多模态融合技术
@@ -2976,68 +1328,18 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
-        
-          
-          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_8" type="checkbox"/>
+<label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+<span class="md-ellipsis">
     
   
     结语与附录
@@ -3045,177 +1347,73 @@
 
     
   </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_8">
-            <span class="md-nav__icon md-icon"></span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_8_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_8">
+<span class="md-nav__icon md-icon"></span>
             
   
     结语与附录
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../06-conclusion/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../06-conclusion/">
+<span class="md-ellipsis">
     
   
-    🔒总结
+    总结
   
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../07-evidence-grading/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../07-evidence-grading/">
+<span class="md-ellipsis">
     
   
-    🔒证据等级与判断口径
+    证据等级与判断口径
   
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../07-appendix/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../07-appendix/">
+<span class="md-ellipsis">
     
   
-    🔒附录
+    附录
   
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../00-version-history/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../00-version-history/">
+<span class="md-ellipsis">
     
   
-    🔒版本历史
+    版本历史
   
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_10" >
-        
-          
-          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_10" type="checkbox"/>
+<label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+<span class="md-ellipsis">
     
   
     参与方式
@@ -3223,63 +1421,33 @@
 
     
   </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_10">
-            <span class="md-nav__icon md-icon"></span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_10_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_10">
+<span class="md-nav__icon md-icon"></span>
             
   
     参与方式
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../contributing/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../contributing/">
+<span class="md-ellipsis">
     
   
-    🔒如何参与
+    如何参与
   
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../contributing/industry-participation/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../contributing/industry-participation/">
+<span class="md-ellipsis">
     
   
     为何参与
@@ -3287,317 +1455,514 @@
 
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_11" >
-        
-          
-          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    产业协同与 SPI 筹备
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_11">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    产业协同与 SPI 筹备
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../07-spi/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    🔒SuperPod Pareto Index (SPI) 筹备说明书
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../07-spi-registry/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    🔒SPI 现有收录产品名录
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../08-ecosystem-map/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    🔒产业生态地图
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-  </ul>
+</a>
+</li>
+</ul>
 </nav>
-                  </div>
-                </div>
-              </div>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_11" type="checkbox"/>
+<label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+<span class="md-ellipsis">
+    
+  
+    产业协同与 SPI 筹备
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_11_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_11">
+<span class="md-nav__icon md-icon"></span>
             
-            
-          
-          
-            <div class="md-content" data-md-component="content">
-              
-              <article class="md-content__inner md-typeset">
-                
-                  
-
-
   
-    <a href="https://github.com/DeepLink-org/superpod-whitepaper/edit/main/src/01-architecture/05-topology.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
-      
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
-    </a>
-  
+    产业协同与 SPI 筹备
   
 
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../07-spi/">
+<span class="md-ellipsis">
+    
+  
+    SuperPod Pareto Index (SPI) 筹备说明书
+  
 
-<div id="mkdocs-encrypted-content" style="display:none">5n2oQIMRqWYt8z5GzLtSFA==;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</div>
-<div id="mkdocs-decrypted-content" style="display:none">
-    <form id="mkdocs-decrypt-form" class="md-content__inner md-typeset">
-        <h1>This content is protected with AES encryption. </h1>
-        <p>Contact your administrator for access to this page.</p>
-        <input class="md-input" type="password" id="mkdocs-content-password" placeholder="Password">
-        
-        <p id="mkdocs-decrypt-msg"></p>
-    </form>
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../07-spi-registry/">
+<span class="md-ellipsis">
+    
+  
+    SPI 现有收录产品名录
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../08-ecosystem-map/">
+<span class="md-ellipsis">
+    
+  
+    产业生态地图
+  
+
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
 </div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<a class="md-content__button md-icon" href="https://github.com/DeepLink-org/superpod-whitepaper/edit/main/src/01-architecture/05-topology.md" rel="edit" title="编辑此页">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"></path></svg>
+</a>
+<h1 id="_1">拓扑与组网<a class="headerlink" href="#_1" title="Permanent link"><span><span class="heti-spacing"> </span>¶</span></a></h1>
+<p>本章介绍<span class="heti-skip"><span class="heti-spacing"> </span>Scale-Up<span class="heti-spacing"> </span></span>域的互联拓扑设计，包括关键指标定义、常见拓扑分析与性能对比。</p>
+<hr/>
+<p>互联拓扑定义了计算节点（或<span><span class="heti-spacing"> </span>GPU</span>）间的物理连接方式与逻辑结构，它直接决定了整个系统的通信性能，包括带宽、延迟、扩展性和成本。在超节点架构中，选择合适的拓扑是构建高效、无阻塞通信域的基石。当前主流技术路径为电子分组交换（Electronic Packet Switching，EPS<heti-adjacent class="heti-adjacent-half">）</heti-adjacent>，而光学电路交换（Optical Circuit Switching，OCS）作为前沿方向也备受关注。我们首先以最为常见的 <strong><span>Full Mesh<span class="heti-spacing"> </span></span>拓扑</strong> 为例来分析<span class="heti-skip"><span class="heti-spacing"> </span>GPU<span class="heti-spacing"> </span></span>的互联拓扑，以及互联拓扑有哪些关键性质<heti-adjacent class="heti-adjacent-half">。</heti-adjacent>【归纳】</p>
+<h2 id="_2">拓扑关键指标<a class="headerlink" href="#_2" title="Permanent link"><span><span class="heti-spacing"> </span>¶</span></a></h2>
+<p>为了能够定量比较不同的互联拓扑，需要引入一些关键指标：</p>
+<ul>
+<li><strong>网络直径（Network Diameter）</strong>：<span class="arithmatex">\(D(G) = \displaystyle\max_{u, v \in V} d(u, v)\)</span>，指网络中任意两个节点间的最短路径长度，刻画了最坏情况下的通信延迟。<span>Full Mesh<span class="heti-spacing"> </span></span>拓扑中任意两个节点直接连接，因此 <strong>网络直径为<span><span class="heti-spacing"> </span>1</span></strong>。在<span class="heti-skip"><span class="heti-spacing"> </span>Spine-leaf<span class="heti-spacing"> </span></span>拓扑中，任意两个节点间的通信最多只需经过<span class="heti-skip"><span class="heti-spacing"> </span>"<span class="heti-spacing"> </span></span>上行<span class="heti-skip"><span class="heti-spacing"> </span>-<span class="heti-spacing"> </span></span>下行<span class="heti-skip"><span class="heti-spacing"> </span>"<span class="heti-spacing"> </span></span>三跳（Leaf-Spine-Leaf<heti-adjacent class="heti-adjacent-half">）</heti-adjacent>，因此 <strong>网络直径为<span><span class="heti-spacing"> </span>3</span></strong>。</li>
+<li><strong>二分带宽（Bisection Bandwidth）</strong>：指当网络被切成两半时，连接这两半部分的总通信能力。它反映了网络在最坏通信场景下的最大数据传输能力。在<span class="heti-skip"><span class="heti-spacing"> </span>Full Mesh<span class="heti-spacing"> </span></span>拓扑中，一半网络有<span class="heti-skip"><span class="heti-spacing"> </span><span class="arithmatex">\(N/2\)</span><span class="heti-spacing"> </span></span>个节点，每个节点有<span class="heti-skip"><span class="heti-spacing"> </span><span class="arithmatex">\(N/2\)</span><span class="heti-spacing"> </span></span>条链路连接到另一半网络，因此<span class="heti-skip"><span class="heti-spacing"> </span>Full Mesh<span class="heti-spacing"> </span></span>拓扑的二分带宽为<span><span class="heti-spacing"> </span><span class="arithmatex">\(\dfrac{N}{2} \times \dfrac{N}{2} \times B = \dfrac{N^2}{4} B\)</span></span>。在<span class="heti-skip"><span class="heti-spacing"> </span>Fat-Tree<span class="heti-spacing"> </span></span>拓扑下，一半网络有<span class="heti-skip"><span class="heti-spacing"> </span><span class="arithmatex">\(N/2\)</span><span class="heti-spacing"> </span></span>个节点，每个节点都能与另一半网络全速率通信，因此<span class="heti-skip"><span class="heti-spacing"> </span>Fat-Tree<span class="heti-spacing"> </span></span>拓扑的二分带宽为<span><span class="heti-spacing"> </span><span class="arithmatex">\(\dfrac{N}{2} B\)</span></span>。</li>
+<li><strong>径向扩展度（Radix Scalability）</strong>：指在给定交换芯片<span class="heti-skip"><span class="heti-spacing"> </span>radix<span class="heti-spacing"> </span></span>条件下的最大无阻塞集群规模<span><span class="heti-spacing"> </span><span class="arithmatex">\(N_{max}\)</span></span>。它衡量了在给定交换芯片端口数（<span class="arithmatex">\(R_{switch}\)</span>）和终端设备接口数（<span class="arithmatex">\(R_{dev}\)</span>）的条件下，一个拓扑理论上能构建的最大无阻塞集群规模。<span>Full Mesh<span class="heti-spacing"> </span></span>拓扑下，互联规模<span><span class="heti-spacing"> </span><span class="arithmatex">\(N_{max} = R_{dev} + 1\)</span></span>，<span>Fat-Tree<span class="heti-spacing"> </span></span>拓扑下<span><span class="heti-spacing"> </span><span class="arithmatex">\(N_{max} = R_{switch}^3 / 4 R_{dev}\)</span></span>。</li>
+<li><strong>平均最短路径长度（ASPL）</strong>：<span><span class="arithmatex">\(\sum_{u,v} d(u,v) / N(N-1)\)</span><span class="heti-spacing"> </span></span>反映网络延迟的整体水平。</li>
+</ul>
+<h2 id="_3">常见拓扑<a class="headerlink" href="#_3" title="Permanent link"><span><span class="heti-spacing"> </span>¶</span></a></h2>
+<h3 id="full-mesh">全互联（Full Mesh）<a class="headerlink" href="#full-mesh" title="Permanent link">¶</a></h3>
+<p><strong>Full Mesh（全互联）</strong>，或称全连接（All-to-All<heti-adjacent class="heti-adjacent-half">）</heti-adjacent>，是理论上最理想的通信拓扑结构。网络中的每一个节点都与其他所有节点建立直接的点对点连接。</p>
+<pre class="mermaid"><code>block-beta
+    columns 7
+    space:2 N0 space N1 space:2
+    space:7
+    N7 space:5 N2
+    space:7
+    N6 space:5 N3
+    space:7
+    space:2 N5 space N4
 
-<script type="text/javascript">
-var encryptcontent_id = "encryptcontent_1";
-var encryptcontent_path = "superpod-whitepaper/01-architecture/05-topology/";
-var decryption_failure_message = "Invalid password.";
-var encryptcontent_keystore = ["6fgT9D38P/bPINJwfPsfXg==;PmN70P6q4XOjxmqUPkvxQAxc/N17gaSpp5jS0GCeOHd8n1sjuMnfZiiMSaZe/sqyDCKMmWxow61ohH8sdYXmHhzJ7LNfZFNnW1Qad7vWJ4JzWnuWwUtcTOX2tFSlidFN;o8Hk/u+1MmqXVs05O0YV2w=="];
-var encryptcontent_obfuscate = 0;
-
-const encryptcontent_event = new Event("encryptcontent_event");
-var encryptcontent_done = false;
-</script>
-<script type="module">
-if (!window.hasOwnProperty("init_decryptor")) {
-    import("../../assets/javascripts/decrypt-contents.js");
-} else {
-    init_decryptor();
-}
-</script>
-
-
-
-
-
-
-
-
-
-
-
-
-                
-              </article>
-            </div>
-          
-          
+    N0 --- N1
+    N0 --- N2
+    N0 --- N3
+    N0 --- N4
+    N0 --- N5
+    N0 --- N6
+    N0 --- N7
+    N1 --- N2
+    N1 --- N3
+    N1 --- N4
+    N1 --- N5
+    N1 --- N6
+    N1 --- N7
+    N2 --- N3
+    N2 --- N4
+    N2 --- N5
+    N2 --- N6
+    N2 --- N7
+    N3 --- N4
+    N3 --- N5
+    N3 --- N6
+    N3 --- N7
+    N4 --- N5
+    N4 --- N6
+    N4 --- N7
+    N5 --- N6
+    N5 --- N7
+    N6 --- N7</code></pre>
+<p><span>Full Mesh<span class="heti-spacing"> </span></span>拓扑具备如下特点：</p>
+<ul>
+<li>理论最优延迟（直径<span><span class="heti-spacing"> </span>1</span>）与最高二分带宽<span><span class="heti-spacing"> </span><span class="arithmatex">\(\dfrac{N^2}{4}B\)</span></span></li>
+<li>端口数平方增长，适合<span class="heti-skip"><span class="heti-spacing"> </span>8/16<span class="heti-spacing"> </span></span>以内的小规模<span class="heti-skip"><span class="heti-spacing"> </span>HBD<span class="heti-spacing"> </span></span>或板级互联</li>
+</ul>
+<h3 id="clos">Clos（多级交换网络）<a class="headerlink" href="#clos" title="Permanent link">¶</a></h3>
+<p><strong><span>Clos<span class="heti-spacing"> </span></span>网络架构</strong>是一种多级交换网络结构，由<span class="heti-skip"><span class="heti-spacing"> </span>Charles Clos<span class="heti-spacing"> </span></span>在<span class="heti-skip"><span class="heti-spacing"> </span>1953<span class="heti-spacing"> </span></span>年提出。其核心思想是通过将大规模交换任务分解为多个小交换机模块，并按输入层（Input<heti-adjacent class="heti-adjacent-half">）</heti-adjacent>、中间层（Middle）和输出层（Output）分级互联。设交换机端口数为<span><span class="heti-spacing"> </span><span class="arithmatex">\(k\)</span></span>，网络层数为<span><span class="heti-spacing"> </span><span class="arithmatex">\(L\)</span></span>，以标准无收敛组网计算，<span>CLOS<span class="heti-spacing"> </span></span>的拓扑规模<span><span class="heti-spacing"> </span><span class="arithmatex">\(N = k^L\)</span></span>。<span>Clos<span class="heti-spacing"> </span></span>网络架构主要优势在于：</p>
+<ul>
+<li><strong>经济可行</strong>：通过大量相同规格的低成本交换机构建网络，避免依赖少数昂贵设备，显著降低建设和运营成本。</li>
+<li><strong>高容错性</strong>：具有多条等价路径，当任意一条链路或交换机故障时，流量可以被重新路由到其他路径，不会导致单点失效。</li>
+<li><strong>可扩展性</strong>：可以通过增加<span class="heti-skip"><span class="heti-spacing"> </span>Spine<span class="heti-spacing"> </span></span>交换机或增加网络层级来平滑地扩展集群规模。</li>
+</ul>
+<p>当前，主流的<span class="heti-skip"><span class="heti-spacing"> </span>Clos<span class="heti-spacing"> </span></span>网络架构主要有<span class="heti-skip"><span class="heti-spacing"> </span>Spine-leaf<span class="heti-spacing"> </span></span>架构和<span class="heti-skip"><span class="heti-spacing"> </span>Fat-tree<span class="heti-spacing"> </span></span>架构。</p>
+<p><strong>Spine-leaf（叶脊）</strong>是一种全互联、扁平化的<span class="heti-skip"><span class="heti-spacing"> </span>Clos<span class="heti-spacing"> </span></span>网络架构。典型的<span class="heti-skip"><span class="heti-spacing"> </span>Spine-leaf<span class="heti-spacing"> </span></span>网络架构一般只有两层，由<span class="heti-skip"><span class="heti-spacing"> </span>"<span class="heti-spacing"> </span></span>脊交换机<span><span class="heti-spacing"> </span>"</span>（Spine Switches）和<span class="heti-skip"><span class="heti-spacing"> </span>"<span class="heti-spacing"> </span></span>叶交换机<span><span class="heti-spacing"> </span>"</span>（Leaf Switches）组成。<span>Leaf<span class="heti-spacing"> </span></span>交换机汇聚服务器流量，并上联至所有<span class="heti-skip"><span class="heti-spacing"> </span>Spine<span class="heti-spacing"> </span></span>交换机；<span>Spine<span class="heti-spacing"> </span></span>交换机与所有<span class="heti-skip"><span class="heti-spacing"> </span>Leaf<span class="heti-spacing"> </span></span>形成全网格互联，但<span class="heti-skip"><span class="heti-spacing"> </span>Spine<span class="heti-spacing"> </span></span>层内部通常不直接互连。这种结构保证了任意两个不同叶交换机下的节点通信最多只需经过<span class="heti-skip"><span class="heti-spacing"> </span>"<span class="heti-spacing"> </span></span>上行<span class="heti-skip"><span class="heti-spacing"> </span>-<span class="heti-spacing"> </span></span>下行<span class="heti-skip"><span class="heti-spacing"> </span>"<span class="heti-spacing"> </span></span>三跳（Leaf-Spine-Leaf<heti-adjacent class="heti-adjacent-half">）</heti-adjacent>。在<span class="heti-skip"><span class="heti-spacing"> </span>Spine-leaf<span class="heti-spacing"> </span></span>的扁平化架构中，节点间通信路径短，跨叶节点的通信通常仅三跳，因此实现了低延迟和高带宽。</p>
+<p><strong>Fat-Tree（胖树）</strong> 是一种对称的三层<span class="heti-skip"><span class="heti-spacing"> </span>Clos<span class="heti-spacing"> </span></span>网络架构，其核心设计思想是：从网络边缘（终端节点）向核心（根方向）上行时，链路带宽逐级增加，确保任意两个节点间的通信都拥有充足的带宽资源。在典型的<span class="heti-skip"><span class="heti-spacing"> </span><span class="arithmatex">\(k\)</span>-ary Fat-Tree<span class="heti-spacing"> </span></span>中，所有交换机均为<span class="heti-skip"><span class="heti-spacing"> </span><span class="arithmatex">\(k\)</span><span class="heti-spacing"> </span></span>端口设备，整个网络由三层组成：核心层（Core layer<heti-adjacent class="heti-adjacent-half">）</heti-adjacent>、汇聚层（Aggregation layer）和边缘层（edge layer<heti-adjacent class="heti-adjacent-half">）</heti-adjacent>。网络包含<span class="heti-skip"><span class="heti-spacing"> </span><span class="arithmatex">\(k\)</span><span class="heti-spacing"> </span></span>个 分区（pod<heti-adjacent class="heti-adjacent-half">）</heti-adjacent>，每个分区内部由<span class="heti-skip"><span class="heti-spacing"> </span><span class="arithmatex">\(k/2\)</span><span class="heti-spacing"> </span></span>个边缘交换机和<span class="heti-skip"><span class="heti-spacing"> </span><span class="arithmatex">\(k/2\)</span><span class="heti-spacing"> </span></span>个汇聚交换机构成；整个网络的核心层共有<span class="heti-skip"><span class="heti-spacing"> </span><span class="arithmatex">\((k/2)^2\)</span><span class="heti-spacing"> </span></span>个核心交换机。每个边缘交换机使用<span class="heti-skip"><span class="heti-spacing"> </span><span class="arithmatex">\(k/2\)</span><span class="heti-spacing"> </span></span>个端口连接服务器，另<span class="heti-skip"><span class="heti-spacing"> </span><span class="arithmatex">\(k/2\)</span><span class="heti-spacing"> </span></span>个端口上联至汇聚层；汇聚交换机再通过<span class="heti-skip"><span class="heti-spacing"> </span><span class="arithmatex">\(k/2\)</span><span class="heti-spacing"> </span></span>条上行链路连接核心层。<span>Fat-Tree<span class="heti-spacing"> </span></span>通过精心设计上行与下行链路的带宽比例（收敛比<heti-adjacent class="heti-adjacent-half">）</heti-adjacent>，可以为<span class="heti-skip"><span class="heti-spacing"> </span>All-to-All<span class="heti-spacing"> </span></span>等复杂通信模式提供接近线速的聚合带宽，实现理论上的无阻塞通信。</p>
+<p><span>NVIDIA<span class="heti-spacing"> </span></span>的<span class="heti-skip"><span class="heti-spacing"> </span>DGX SuperPOD<span class="heti-spacing"> </span></span>架构本质上就是一个精心设计的<span class="heti-skip"><span class="heti-spacing"> </span>Spine-leaf<span class="heti-spacing"> </span></span>网络：</p>
+<ul>
+<li><strong>第一级</strong>：在单个节点内部，多颗<span class="heti-skip"><span class="heti-spacing"> </span>NVSwitch<span class="heti-spacing"> </span></span>芯片构建了一个单级的、逻辑上完全无阻塞的全互联网络（Full Mesh<heti-adjacent class="heti-adjacent-half">）</heti-adjacent>，将域内所有<span class="heti-skip"><span class="heti-spacing"> </span>GPU<span class="heti-spacing"> </span></span>全互联起来。</li>
+<li><strong>第二级</strong>：第一级的<span class="heti-skip"><span class="heti-spacing"> </span>NVSwitch<span class="heti-spacing"> </span></span>再通过第二级的<span class="heti-skip"><span class="heti-spacing"> </span>NVSwitch<span class="heti-spacing"> </span></span>进行互联，形成一个<span class="heti-skip"><span class="heti-spacing"> </span>32<span class="heti-spacing"> </span></span>卡的<span class="heti-skip"><span class="heti-spacing"> </span>Scale-Up<span class="heti-spacing"> </span></span>通信域。</li>
+</ul>
+<figure>
+<p><img alt="CLOS拓扑结构" src="../imgs/topo-clos.png"/></p>
+<figcaption>
+<p>图<span><span class="heti-spacing"> </span>1: CLOS</span>（胖树）拓扑结构示意图</p>
+</figcaption>
+</figure>
+<h2 id="_4">新型拓扑<a class="headerlink" href="#_4" title="Permanent link"><span><span class="heti-spacing"> </span>¶</span></a></h2>
+<h3 id="dragonfly">Dragonfly<a class="headerlink" href="#dragonfly" title="Permanent link">¶</a></h3>
+<p><strong><span>Dragonfly<span class="heti-spacing"> </span></span>拓扑</strong> 是一种为超大规模计算设计的、旨在降低网络直径和成本的拓扑结构<sup id="fnref:dragonfly"><a class="footnote-ref" href="#fn:dragonfly"><span><span class="heti-spacing"> </span>1</span></a></sup>。它将路由器（交换机）和与之相连的计算节点组织成<span class="heti-skip"><span class="heti-spacing"> </span>"<span class="heti-spacing"> </span></span>组<span><span class="heti-spacing"> </span>"</span>（Group<heti-adjacent class="heti-adjacent-half">）</heti-adjacent>。组内，路由器之间实现全互联（All-to-All<heti-adjacent class="heti-adjacent-half">）</heti-adjacent>。组间，通过长距离的<span class="heti-skip"><span class="heti-spacing"> </span>"<span class="heti-spacing"> </span></span>全局链路<span class="heti-skip"><span class="heti-spacing"> </span>"<span class="heti-spacing"> </span></span>进行稀疏连接。<span>Dragonfly<span class="heti-spacing"> </span></span>拓扑具备如下特点：</p>
+<ul>
+<li><strong>低网络直径</strong>：任意两个节点间的通信路径非常短，通常最多只需一跳组内路由和一跳全局路由。</li>
+<li><strong>成本效益</strong>：相比于同等规模的全连接胖树，<span>Dragonfly<span class="heti-spacing"> </span></span>所需的全局链路和交换机端口更少，成本更低。</li>
+</ul>
+<p><span>Dragonfly<span class="heti-spacing"> </span></span>的挑战在于，全局链路相对稀疏，就像一个城市的主干道有限。如果路由策略不佳，所有流量都涌向少数几条主干道，就会造成严重的拥堵。因此，它必须依赖智能的、能感知全局负载的路由算法，动态地为数据包规划<span class="heti-skip"><span class="heti-spacing"> </span>"<span class="heti-spacing"> </span></span>行车路线<span><span class="heti-spacing"> </span>"</span>，才能发挥其低延迟和成本优势。</p>
+<h3 id="dragonfly_1">Dragonfly+<a class="headerlink" href="#dragonfly_1" title="Permanent link">¶</a></h3>
+<p><strong><span>Dragonfly+<span class="heti-spacing"> </span></span>拓扑</strong> 是<span class="heti-skip"><span class="heti-spacing"> </span>Dragonfly<span class="heti-spacing"> </span></span>网络拓扑的增强版，是一类结合了分层交换与直连优势的分组直连网络，旨在超大规模部署中实现性能与成本的平衡<sup id="fnref:dragonfly+"><a class="footnote-ref" href="#fn:dragonfly+"><span><span class="heti-spacing"> </span>2</span></a></sup>。它将网络划分为多个电交换组（Group<heti-adjacent class="heti-adjacent-half">）</heti-adjacent>，组内采用标准的<span class="heti-skip"><span class="heti-spacing"> </span>CLOS<span class="heti-spacing"> </span></span>结构设计以保证本地高带宽，组间则通过全局链路实现全互联。这种架构去除了纯<span class="heti-skip"><span class="heti-spacing"> </span>CLOS<span class="heti-spacing"> </span></span>顶层的庞大核心交换机，代之以更灵活的组间直连，典型应用如谷歌的<span class="heti-skip"><span class="heti-spacing"> </span>Jupiter<span class="heti-spacing"> </span></span>架构。<span>Dragonfly+<span class="heti-spacing"> </span></span>具备如下特点：</p>
+<ul>
+<li><strong>低且稳定的时延表现</strong>：端到端通信的最大跳数为<span class="heti-skip"><span class="heti-spacing"> </span>3<span class="heti-spacing"> </span></span>跳（组内→组间→组内<heti-adjacent class="heti-adjacent-half">）</heti-adjacent>。相比传统三层<span class="heti-skip"><span class="heti-spacing"> </span>CLOS<span class="heti-spacing"> </span></span>架构，它减少了一跳交换时延，且由于组间<span class="heti-skip"><span class="heti-spacing"> </span>1<span class="heti-spacing"> </span></span>跳直连，时延一致性更好，适合<span class="heti-skip"><span class="heti-spacing"> </span>AllReduce<span class="heti-spacing"> </span></span>与<span class="heti-skip"><span class="heti-spacing"> </span>All-to-All<span class="heti-spacing"> </span></span>等流量模式。</li>
+<li><strong>显著的成本与能效收益</strong>：作为性能与成本的折中方案，它比<span class="heti-skip"><span class="heti-spacing"> </span>CLOS<span class="heti-spacing"> </span></span>减少了一层网络设备与模块。网络成本优于<span><span class="heti-spacing"> </span>CLOS</span>（但劣于<span><span class="heti-spacing"> </span>Torus</span><heti-adjacent class="heti-adjacent-half">）</heti-adjacent>，且通过减少交换设备，网络功耗相比<span class="heti-skip"><span class="heti-spacing"> </span>CLOS<span class="heti-spacing"> </span></span>可降低<span><span class="heti-spacing"> </span>25%~50%</span>。</li>
+<li><strong>灵活的规模扩展性</strong>：设<span class="heti-skip"><span class="heti-spacing"> </span>xPU<span class="heti-spacing"> </span></span>端口数为<span><span class="heti-spacing"> </span><span class="arithmatex">\(p\)</span></span>，交换机端口数为<span><span class="heti-spacing"> </span><span class="arithmatex">\(k\)</span></span>，组内网络层数为<span><span class="heti-spacing"> </span><span class="arithmatex">\(L\)</span></span>。在标准无收敛组网下，其组网规模<span><span class="heti-spacing"> </span><span class="arithmatex">\((N = k^L \times p)\)</span></span>。通过增大网络层级、提升端口数或<span class="heti-skip"><span class="heti-spacing"> </span>xPU<span class="heti-spacing"> </span></span>接入数，可实现超大规模互联。</li>
+<li><strong>高可靠与容错能力</strong>：借鉴了<span class="heti-skip"><span class="heti-spacing"> </span>Mesh<span class="heti-spacing"> </span></span>拓扑的路径多样性，具备极强的抗故障能力。多链路或交换机故障可通过路由机制恢复，避免了单点故障导致的大面积瘫痪。</li>
+</ul>
+<h4 id="_5">关键挑战<a class="headerlink" href="#_5" title="Permanent link"><span><span class="heti-spacing"> </span>¶</span></a></h4>
+<p><span>Dragonfly+<span class="heti-spacing"> </span></span>的核心挑战在于路由复杂度。虽然组间直连缩短了物理直径，但为了充分利用有限的全局带宽，需交换机侧支持高速流量转发与智能的<span class="heti-skip"><span class="heti-spacing"> </span>1~2<span class="heti-spacing"> </span></span>跳路由控制。其设计核心是“组内电互联、组间光互联”，通过电链路降低成本、电交换机提高灵活性，并可结合<span><span class="heti-spacing"> </span>OCS</span>（光电路交换）在多任务场景下动态调整带宽利用率，从而在超大规模场景下达成直径、成本与时延的最优平衡。</p>
+<figure>
+<p><img alt="Dragonfly+拓扑结构" src="../imgs/topo-dragonfly.png"/></p>
+<figcaption>
+<p>图<span class="heti-skip"><span class="heti-spacing"> </span>2: Dragonfly+<span class="heti-spacing"> </span></span>拓扑结构示意图</p>
+</figcaption>
+</figure>
+<h3 id="3d-torus">3D Torus<a class="headerlink" href="#3d-torus" title="Permanent link">¶</a></h3>
+<p><strong><span>Torus<span class="heti-spacing"> </span></span>拓扑</strong> 是一种规则的格状拓扑，在多维（如<span><span class="heti-spacing"> </span>2D</span>、3D、6D）网格的每个维度上都带有<span class="heti-skip"><span class="heti-spacing"> </span>"<span class="heti-spacing"> </span></span>环绕式<span class="heti-skip"><span class="heti-spacing"> </span>"<span class="heti-spacing"> </span></span>连接<sup id="fnref:torus"><a class="footnote-ref" href="#fn:torus"><span><span class="heti-spacing"> </span>3</span></a></sup>。每个节点都与其在各个维度上的<span class="heti-skip"><span class="heti-spacing"> </span>"<span class="heti-spacing"> </span></span>邻居<span class="heti-skip"><span class="heti-spacing"> </span>"<span class="heti-spacing"> </span></span>直接相连。<span>Torus<span class="heti-spacing"> </span></span>拓扑具备如下特点：</p>
+<ul>
+<li><strong>优异的局部性</strong>：非常适合具有邻近通信模式的科学计算应用（如气象模拟、流体力学<heti-adjacent class="heti-adjacent-half">）</heti-adjacent>，因为相邻节点间通信延迟极低。</li>
+<li><strong>二分带宽较低</strong>：将其切成两半时，横跨切面的链路数量相对较少，这意味着其全局<span class="heti-skip"><span class="heti-spacing"> </span>All-to-All<span class="heti-spacing"> </span></span>通信性能不如胖树。</li>
+<li><strong>扩展性受限</strong>：高维<span class="heti-skip"><span class="heti-spacing"> </span>Torus<span class="heti-spacing"> </span></span>布线复杂，扩展成本高。理论上<span class="heti-skip"><span class="heti-spacing"> </span>Torus<span class="heti-spacing"> </span></span>拓扑组网规模在不限制网络直径约束下可无限扩展。但实际应用中采用<span class="heti-skip"><span class="heti-spacing"> </span>64 Cube<span class="heti-spacing"> </span></span>电缆互连的基本单元结合<span class="heti-skip"><span class="heti-spacing"> </span>OCS<span class="heti-spacing"> </span></span>提高算卡利用率，此时组网规模受限于<span class="heti-skip"><span class="heti-spacing"> </span>OCS<span class="heti-spacing"> </span></span>端口数量，设<span class="heti-skip"><span class="heti-spacing"> </span>OCS<span class="heti-spacing"> </span></span>的端口数为<span><span class="heti-spacing"> </span><span class="arithmatex">\(R\)</span></span>，<span>3D-Torus<span class="heti-spacing"> </span></span>的拓扑规模<span><span class="heti-spacing"> </span><span class="arithmatex">\(N = 64 \times R\)</span></span>。</li>
+</ul>
+<figure>
+<p><img alt="3D-Torus拓扑结构" src="../imgs/topo-3dtorus.png"/></p>
+<figcaption>
+<p>图<span class="heti-skip"><span class="heti-spacing"> </span>3: 3D-Torus<span class="heti-spacing"> </span></span>拓扑结构示意图</p>
+</figcaption>
+</figure>
+<h3 id="slimfly">SlimFly<a class="headerlink" href="#slimfly" title="Permanent link">¶</a></h3>
+<p><strong><span>SlimFly<span class="heti-spacing"> </span></span>拓扑</strong>：作为<span class="heti-skip"><span class="heti-spacing"> </span>Dragonfly<span class="heti-spacing"> </span></span>的演进，<span>SlimFly<span class="heti-spacing"> </span></span>是一种在给定交换机端口数下，能够以更少的网络直径和接近最优的二分带宽连接更多节点的拓扑结构<sup id="fnref:slimfly"><a class="footnote-ref" href="#fn:slimfly"><span><span class="heti-spacing"> </span>4</span></a></sup>。它在理论上被证明是构建超大规模网络最高效的拓扑之一，但其不规则的连接方式对物理布线和路由算法设计提出了极高挑战，目前更多处于学术研究和前沿探索阶段。</p>
+<figure>
+<p><img alt="Slimfly拓扑结构" src="../imgs/topo-slimfly.png"/></p>
+<figcaption>
+<p>图<span class="heti-skip"><span class="heti-spacing"> </span>4: Slimfly<span class="heti-spacing"> </span></span>拓扑结构示意图</p>
+</figcaption>
+</figure>
+<h2 id="_6">拓扑性能对比<a class="headerlink" href="#_6" title="Permanent link"><span><span class="heti-spacing"> </span>¶</span></a></h2>
+<p>对于以<span class="heti-skip"><span class="heti-spacing"> </span>All-to-All<span class="heti-spacing"> </span></span>和<span class="heti-skip"><span class="heti-spacing"> </span>All-Reduce<span class="heti-spacing"> </span></span>为主导通信模式的<span class="heti-skip"><span class="heti-spacing"> </span>AI<span class="heti-spacing"> </span></span>大模型训练而言，胖树拓扑因其优越的全局带宽特性与确定的网络直径而成为事实上的标准选择。但另一方面，<span>Fat-Tree<span class="heti-spacing"> </span></span>所能达到的互联规模也受限于交换机容量。在超节点继续演进的过程中，对互联拓扑的探索也尤为重要<heti-adjacent class="heti-adjacent-half">：</heti-adjacent>【归纳】</p>
+<table>
+<thead>
+<tr>
+<th>拓扑</th>
+<th style="text-align: right;">径向扩展度</th>
+<th style="text-align: right;">网络直径</th>
+<th style="text-align: right;">二分带宽</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Full Mesh</td>
+<td style="text-align: right;"><span class="arithmatex">\(R_{dev} + 1\)</span></td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;"><span class="arithmatex">\(\dfrac{N^2}{4} B\)</span></td>
+</tr>
+<tr>
+<td>Spine-leaf</td>
+<td style="text-align: right;"><span class="arithmatex">\(\dfrac{R_{switch}^2}{2 R_{dev}}\)</span></td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;"><span class="arithmatex">\(\dfrac{N}{2} B\)</span></td>
+</tr>
+<tr>
+<td>Fat-Tree</td>
+<td style="text-align: right;"><span class="arithmatex">\(\dfrac{R_{switch}^3}{4 R_{dev}}\)</span></td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;"><span class="arithmatex">\(\dfrac{N}{2} B\)</span></td>
+</tr>
+<tr>
+<td>Dragonfly</td>
+<td style="text-align: right;"><span class="arithmatex">\(\dfrac{R_{switch}^4}{81 R_{dev}}\)</span></td>
+<td style="text-align: right;"><span class="arithmatex">\(\le 3\)</span></td>
+<td style="text-align: right;"><span class="arithmatex">\(\approx \dfrac{N}{2}B\)</span></td>
+</tr>
+<tr>
+<td>Torus</td>
+<td style="text-align: right;">无上界</td>
+<td style="text-align: right;"><span class="arithmatex">\(D \cdot \dfrac{k}{2}\)</span></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr>
+<td>Slim Fly</td>
+<td style="text-align: right;"><span class="arithmatex">\(\dfrac{32}{243} \times \dfrac{R_{switch}^3}{R_{dev}}\)</span></td>
+<td style="text-align: right;">2–3</td>
+<td style="text-align: right;">设计为接近满二分带宽</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_7">交换与控制技术<a class="headerlink" href="#_7" title="Permanent link"><span><span class="heti-spacing"> </span>¶</span></a></h2>
+<h3 id="nvswitch">NVSwitch<a class="headerlink" href="#nvswitch" title="Permanent link">¶</a></h3>
+<p><span>NVSwitch<span class="heti-spacing"> </span></span>是<span class="heti-skip"><span class="heti-spacing"> </span>NVIDIA<span class="heti-spacing"> </span></span>推出的实现节点内<span class="heti-skip"><span class="heti-spacing"> </span>GPU<span class="heti-spacing"> </span></span>之间高速互联的芯片，属于交换芯片（Switch ASIC）中的<span class="heti-skip"><span class="heti-spacing"> </span>GPU<span class="heti-spacing"> </span></span>专用交换芯片。它能够在单机或机柜级域内构建<span class="heti-skip"><span class="heti-spacing"> </span>GPU<span class="heti-spacing"> </span></span>全互连（all-to-all / non-blocking）通信网络，使网络直径达到<span><span class="heti-spacing"> </span>1</span>，从而每个节点都可以直接与任意其他节点通信，无需经过中间交换节点。该架构特别适用于<span><span class="heti-spacing"> </span>32</span>、<span>72<span class="heti-spacing"> </span></span>或<span class="heti-skip"><span class="heti-spacing"> </span>144<span class="heti-spacing"> </span></span>节点的<span class="heti-skip"><span class="heti-spacing"> </span>Scale-Up<span class="heti-spacing"> </span></span>系统，可最大化节点间带宽利用率，显著降低通信延迟，并有利于大规模并行计算任务的高效调度与执行<heti-adjacent class="heti-adjacent-half">。</heti-adjacent>【事实】</p>
+<p><span>NVSwitch<span class="heti-spacing"> </span></span>的性能会随着<span><span class="heti-spacing"> </span>NVLink</span>（<span>NVIDIA<span class="heti-spacing"> </span></span>开发的片间互联协议）的代际升级而提升。性能提升主要体现在两方面：一是增加每个<span class="heti-skip"><span class="heti-spacing"> </span>GPU<span class="heti-spacing"> </span></span>可用的<span class="heti-skip"><span class="heti-spacing"> </span>NVLink<span class="heti-spacing"> </span></span>数量（link fan-out<heti-adjacent class="heti-adjacent-half">）</heti-adjacent>，二是提高单条<span class="heti-skip"><span class="heti-spacing"> </span>NVLink<span class="heti-spacing"> </span></span>的传输速率。下表中带宽均采用“GB/s（双向）”口径，这是<span class="heti-skip"><span class="heti-spacing"> </span>NVIDIA<span class="heti-spacing"> </span></span>官方常用的聚合带宽表示方法，等于单方向带宽的<span class="heti-skip"><span class="heti-spacing"> </span>2<span class="heti-spacing"> </span></span>倍（1 GB/s ≈ 8 Gb/s<heti-adjacent class="heti-adjacent-half">）</heti-adjacent>。本表中：<sup><span>+<span class="heti-spacing"> </span></span></sup>表示来自官方白皮书<span class="heti-skip"><span class="heti-spacing"> </span>/<span class="heti-spacing"> </span></span>数据手册<span><span class="heti-spacing"> </span>/ Keynote</span>；<sup><span>*<span class="heti-spacing"> </span></span></sup>表示根据公开演讲、产品图片、拓扑描述或带宽反推的推测<span class="heti-skip"><span class="heti-spacing"> </span>/<span class="heti-spacing"> </span></span>半推测值；未标记默认为公开资料已多点交叉验证。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">代际</th>
+<th style="text-align: center;"><span>GPU<span class="heti-spacing"> </span></span>架构</th>
+<th style="text-align: center;">发布（约）</th>
+<th style="text-align: center;"><span>NVLink<span class="heti-spacing"> </span></span>版本</th>
+<th style="text-align: center;">每<span class="heti-skip"><span class="heti-spacing"> </span>Link Lane<span class="heti-spacing"> </span></span>数</th>
+<th style="text-align: center;">每<span class="heti-skip"><span class="heti-spacing"> </span>Lane<span class="heti-spacing"> </span></span>速率 （Gbps）</th>
+<th>每<span class="heti-skip"><span class="heti-spacing"> </span>Link<span class="heti-spacing"> </span></span>双向带宽 （GB/s）</th>
+<th>每<span class="heti-skip"><span class="heti-spacing"> </span>GPU Link<span class="heti-spacing"> </span></span>数</th>
+<th>每<span class="heti-skip"><span class="heti-spacing"> </span>GPU<span class="heti-spacing"> </span></span>聚合双向带宽<span><span class="heti-spacing"> </span>(GB/s)</span></th>
+<th>典型单机<span class="heti-skip"><span class="heti-spacing"> </span>/<span class="heti-spacing"> </span></span>底板<span class="heti-skip"><span class="heti-spacing"> </span>GPU<span class="heti-spacing"> </span></span>数</th>
+<th>可扩展最大<span class="heti-skip"><span class="heti-spacing"> </span>NVLink<span class="heti-spacing"> </span></span>域（官方宣称）</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">第<span class="heti-skip"><span class="heti-spacing"> </span>1<span class="heti-spacing"> </span></span>代</td>
+<td style="text-align: center;">Volta</td>
+<td style="text-align: center;">2018</td>
+<td style="text-align: center;">2.0</td>
+<td style="text-align: center;">8<sup>*</sup></td>
+<td style="text-align: center;">25<sup>+</sup></td>
+<td>50<sup>+</sup></td>
+<td>6<sup>+</sup></td>
+<td>300<sup>+</sup></td>
+<td>16<sup>+</sup></td>
+<td>16<sup>+</sup></td>
+<td>16‑GPU DGX‑<span>2 NVSwitch<span class="heti-spacing"> </span></span>拓扑；<span>Lane<span class="heti-spacing"> </span></span>数依据公开拆解<span class="heti-skip"><span class="heti-spacing"> </span>/<span class="heti-spacing"> </span></span>布线推测</td>
+</tr>
+<tr>
+<td style="text-align: center;">第<span class="heti-skip"><span class="heti-spacing"> </span>2<span class="heti-spacing"> </span></span>代</td>
+<td style="text-align: center;">Ampere</td>
+<td style="text-align: center;">2020</td>
+<td style="text-align: center;">3.0</td>
+<td style="text-align: center;">4<sup>*</sup></td>
+<td style="text-align: center;">50<sup>+</sup></td>
+<td>50<sup>+</sup></td>
+<td>12<sup>+</sup></td>
+<td>600<sup>+</sup></td>
+<td>8<sup>+</sup></td>
+<td>16<sup>+</sup></td>
+<td>HGX A100（<span>8-GPU<span class="heti-spacing"> </span></span>板）官方聚合<span><span class="heti-spacing"> </span>600GB/s</span>；<span>Lane<span class="heti-spacing"> </span></span>数由<span class="heti-skip"><span class="heti-spacing"> </span>Link<span class="heti-spacing"> </span></span>速率与功耗折中推测</td>
+</tr>
+<tr>
+<td style="text-align: center;">第<span class="heti-skip"><span class="heti-spacing"> </span>3<span class="heti-spacing"> </span></span>代</td>
+<td style="text-align: center;">Hopper</td>
+<td style="text-align: center;">2022</td>
+<td style="text-align: center;">4.0</td>
+<td style="text-align: center;">4<sup>*</sup></td>
+<td style="text-align: center;">100<sup>+</sup></td>
+<td>100<sup>+</sup></td>
+<td>18<sup>+</sup></td>
+<td>1800<sup>+</sup></td>
+<td>8<sup>+</sup></td>
+<td>256<sup>+</sup></td>
+<td><span>NVLink 4.0<span class="heti-spacing"> </span></span>单<span class="heti-skip"><span class="heti-spacing"> </span>GPU 900GB/s(<span class="heti-spacing"> </span></span>单向<span><span class="heti-spacing"> </span>450)</span>→双向<span><span class="heti-spacing"> </span>1800</span>；最大<span class="heti-skip"><span class="heti-spacing"> </span>NVL256<span class="heti-spacing"> </span></span>由官方架构介绍</td>
+</tr>
+<tr>
+<td style="text-align: center;">第<span class="heti-skip"><span class="heti-spacing"> </span>4<span class="heti-spacing"> </span></span>代</td>
+<td style="text-align: center;">Blackwell</td>
+<td style="text-align: center;">2025</td>
+<td style="text-align: center;">5.0</td>
+<td style="text-align: center;">4<sup>*</sup></td>
+<td style="text-align: center;">200<sup>+</sup></td>
+<td>200<sup>+</sup></td>
+<td>18<sup>+</sup></td>
+<td>3600<sup>+</sup></td>
+<td>72<sup>+</sup></td>
+<td>576<sup>+</sup></td>
+<td><span>NVLink 5.0<span class="heti-spacing"> </span></span>进<span class="heti-skip"><span class="heti-spacing"> </span>Keynote<span class="heti-spacing"> </span></span>公布速率；<span>NVL72 / 576<span class="heti-spacing"> </span></span>为<span class="heti-skip"><span class="heti-spacing"> </span>GTC<span class="heti-spacing"> </span></span>公布<span class="heti-skip"><span class="heti-spacing"> </span>+<span class="heti-spacing"> </span></span>对<span class="heti-skip"><span class="heti-spacing"> </span>NVLink Fabric<span class="heti-spacing"> </span></span>分层规模推测</td>
+</tr>
+</tbody>
+</table>
+<p>说明：</p>
+<p>（1）“每<span class="heti-skip"><span class="heti-spacing"> </span>Link<span class="heti-spacing"> </span></span>双向带宽”遵循<span class="heti-skip"><span class="heti-spacing"> </span>NVIDIA<span class="heti-spacing"> </span></span>常用口径（聚合双向<heti-adjacent class="heti-adjacent-half">）</heti-adjacent>。</p>
+<p>（2）<span>Lane<span class="heti-spacing"> </span></span>数由于官方文档通常未直接公布，表中以<sup><span class="heti-skip"><span class="heti-spacing"> </span>*<span class="heti-spacing"> </span></span></sup>标示；其值通过已知总带宽、单<span class="heti-skip"><span class="heti-spacing"> </span>Lane<span class="heti-spacing"> </span></span>速率与历代封装约束反向推断。如未来出现官方差异数据，应以官方为准。</p>
+<p>（3）“最大<span class="heti-skip"><span class="heti-spacing"> </span>NVLink<span class="heti-spacing"> </span></span>域”指官方在对应代际提及的（或<span class="heti-skip"><span class="heti-spacing"> </span>Keynote<span class="heti-spacing"> </span></span>展示的）最大可支持互联规模；<span>Blackwell 576<span class="heti-spacing"> </span></span>带<sup><span class="heti-skip"><span class="heti-spacing"> </span>*<span class="heti-spacing"> </span></span></sup>为推测（推断自<span class="heti-skip"><span class="heti-spacing"> </span>72×GB200 NVL72<span class="heti-spacing"> </span></span>单元<span class="heti-skip"><span class="heti-spacing"> </span>×<span class="heti-spacing"> </span></span>互联分层聚合<heti-adjacent class="heti-adjacent-half">）</heti-adjacent>。</p>
+<p>（4）<span>Volta<span class="heti-spacing"> </span></span>时代<span class="heti-skip"><span class="heti-spacing"> </span>NVLink 2.0<span class="heti-spacing"> </span></span>在<span class="heti-skip"><span class="heti-spacing"> </span>NVSwitch<span class="heti-spacing"> </span></span>中实现的<span><span class="heti-spacing"> </span>Fan-out</span>、<span>Lane<span class="heti-spacing"> </span></span>数量公开资料缺少直接原始表格，使用多来源拆解<span class="heti-skip"><span class="heti-spacing"> </span>/<span class="heti-spacing"> </span></span>演讲交叉验证。</p>
+<h3 id="infiniband-asic">以太网<span class="heti-skip"><span class="heti-spacing"> </span>/ InfiniBand<span class="heti-spacing"> </span></span>交换<span><span class="heti-spacing"> </span>ASIC</span><a class="headerlink" href="#infiniband-asic" title="Permanent link"><span><span class="heti-spacing"> </span>¶</span></a></h3>
+<p>在大规模<span class="heti-skip"><span class="heti-spacing"> </span>AI/HPC<span class="heti-spacing"> </span></span>集群中，单机节点内部的<span class="heti-skip"><span class="heti-spacing"> </span>NVSwitch<span class="heti-spacing"> </span></span>已能提供高带宽、低延迟的<span class="heti-skip"><span class="heti-spacing"> </span>GPU<span class="heti-spacing"> </span></span>互连，但跨节点、跨机架的通信仍然是性能瓶颈。为了解决节点间数据交换的挑战，<strong>Ethernet Switch ASIC</strong> 和 <strong>InfiniBand (IB) Switch ASIC</strong> 被广泛应用于集群网络互连中。它们通过高端口数、高<span class="heti-skip"><span class="heti-spacing"> </span>radix<span class="heti-spacing"> </span></span>的设计能够直接连接更多上游和下游节点，从而实现大径向扩展，在大规模节点集群中显著降低网络跳数和延迟，实现高带宽。同时，为了在高扩展性下维持链路的有效利用率和避免热点拥塞，这类交换芯片在设计时必须考虑合理的收敛比，即上游端口与下游端口的连接比例需要与网络拓扑匹配，以在性能和资源利用之间取得平衡。<span>Ethernet ASIC<span class="heti-spacing"> </span></span>通常基于标准以太网协议，支持<span class="heti-skip"><span class="heti-spacing"> </span>TCP/IP<span class="heti-spacing"> </span></span>与<span><span class="heti-spacing"> </span>RoCE</span>，而<span class="heti-skip"><span class="heti-spacing"> </span>InfiniBand ASIC<span class="heti-spacing"> </span></span>则提供低延迟、高带宽和<span class="heti-skip"><span class="heti-spacing"> </span>RDMA<span class="heti-spacing"> </span></span>支持，二者共同构成了现代节点间高性能互连的关键基础。</p>
+<p>为了确保不同厂商设备间的互联互通，光互联论坛（OIF）制定了通用电气接口（CEI）规范，对电气接口的物理形态、电压、频率以及信号调制方式等进行了标准化。例如，<span>CEI-56G/112G/224G<span class="heti-spacing"> </span></span>等规范定义了单通道（per-lane）在<span><span class="heti-spacing"> </span>56Gbps</span>、112Gbps、<span>224Gbps<span class="heti-spacing"> </span></span>速率下的接口标准，其中广泛使用了<span><span class="heti-spacing"> </span>PAM4</span>（4-Level Pulse Amplitude Modulation）等高级调制技术来提升数据速率。这些规范被<span><span class="heti-spacing"> </span>PCIe</span>、CXL、<span>NVLink<span class="heti-spacing"> </span></span>和以太网等主流互联协议广泛采纳或参考，作为其物理层设计的基础。目前<span class="heti-skip"><span class="heti-spacing"> </span>CEI<span class="heti-spacing"> </span></span>规范的主要节点如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">规范系列</th>
+<th style="text-align: center;">发布年份（约）</th>
+<th style="text-align: center;">单通道速率<span><span class="heti-spacing"> </span>(Gbps)</span></th>
+<th style="text-align: center;">调制方式</th>
+<th style="text-align: center;">典型应用<span class="heti-skip"><span class="heti-spacing"> </span>/<span class="heti-spacing"> </span></span>参考协议</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">CEI-28G</td>
+<td style="text-align: center;">~2011</td>
+<td style="text-align: center;">28</td>
+<td style="text-align: center;">NRZ</td>
+<td style="text-align: center;"><span>100G<span class="heti-spacing"> </span></span>以太网<span><span class="heti-spacing"> </span>(4x25G), PCIe 4.0/5.0, InfiniBand EDR</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">CEI-56G</td>
+<td style="text-align: center;">~2017</td>
+<td style="text-align: center;">56</td>
+<td style="text-align: center;">PAM4</td>
+<td style="text-align: center;"><span>200G/400G<span class="heti-spacing"> </span></span>以太网<span><span class="heti-spacing"> </span>, PCIe 6.0, NVLink 4.0 (H100)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">CEI-112G</td>
+<td style="text-align: center;">~2022</td>
+<td style="text-align: center;">112</td>
+<td style="text-align: center;">PAM4</td>
+<td style="text-align: center;"><span>800G<span class="heti-spacing"> </span></span>以太网<span class="heti-skip"><span class="heti-spacing"> </span>, CXL 3.0,<span class="heti-spacing"> </span></span>下一代<span><span class="heti-spacing"> </span>NVLink</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">CEI-224G</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">224</td>
+<td style="text-align: center;">PAM4</td>
+<td style="text-align: center;"><span>1.6T/3.2T<span class="heti-spacing"> </span></span>以太网<span class="heti-skip"><span class="heti-spacing"> </span>,<span class="heti-spacing"> </span></span>未来高速互联</td>
+</tr>
+</tbody>
+</table>
+<p>说明：<span>NRZ (Non-Return-to-Zero)<span class="heti-spacing"> </span></span>每符号传输<span class="heti-skip"><span class="heti-spacing"> </span>1 bit<span class="heti-spacing"> </span></span>数据，<span>PAM4 (Pulse Amplitude Modulation 4-level)<span class="heti-spacing"> </span></span>每符号传输<span class="heti-skip"><span class="heti-spacing"> </span>2 bit<span class="heti-spacing"> </span></span>数据，在相同波特率下可实现双倍数据速率。</p>
+<p>在交换芯片内部，SerDes（Serializer/Deserializer，串行器<span class="heti-skip"><span class="heti-spacing"> </span>/<span class="heti-spacing"> </span></span>解串器）负责并行数据与串行信号之间的转换。<span>SerDes<span class="heti-spacing"> </span></span>在发送端将芯片内部的并行数据转换为高速串行信号，在接收端将串行信号转换为并行数据。<strong>Broadcom Tomahawk</strong>是<span class="heti-skip"><span class="heti-spacing"> </span>Ethernet ASIC<span class="heti-spacing"> </span></span>的一种具体实现，其演进与光互联论坛制定的通用电气接口（CEI）规范紧密相关：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">交换容量（Tbps）</th>
+<th style="text-align: center;"><span>SerDes<span class="heti-spacing"> </span></span>速率（每<span><span class="heti-spacing"> </span>Lane</span>）</th>
+<th style="text-align: center;"><span>CEI<span class="heti-spacing"> </span></span>代际对应</th>
+<th style="text-align: center;">代表芯片（发布年）</th>
+<th style="text-align: center;">可支持的典型<span class="heti-skip"><span class="heti-spacing"> </span>4-Lane<span class="heti-spacing"> </span></span>端口（示例）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">3.2 T</td>
+<td style="text-align: center;">25G NRZ</td>
+<td style="text-align: center;">CEI-28G</td>
+<td style="text-align: center;">Tomahawk (2014)</td>
+<td style="text-align: center;">32 x 100G (4x25G)</td>
+</tr>
+<tr>
+<td style="text-align: center;">6.4 T</td>
+<td style="text-align: center;">25G NRZ</td>
+<td style="text-align: center;">CEI-28G</td>
+<td style="text-align: center;">Tomahawk 2 (2016)</td>
+<td style="text-align: center;">64 x 100G (4x25G)</td>
+</tr>
+<tr>
+<td style="text-align: center;">12.8 T</td>
+<td style="text-align: center;">50G PAM4</td>
+<td style="text-align: center;">CEI-56G</td>
+<td style="text-align: center;">Tomahawk 3 (2018)</td>
+<td style="text-align: center;">64 x 200G (4x50G)</td>
+</tr>
+<tr>
+<td style="text-align: center;">25.6 T</td>
+<td style="text-align: center;">100G PAM4</td>
+<td style="text-align: center;">CEI-112G</td>
+<td style="text-align: center;">Tomahawk 4 (2020)</td>
+<td style="text-align: center;">64 x 400G (4x100G)</td>
+</tr>
+<tr>
+<td style="text-align: center;">51.2 T</td>
+<td style="text-align: center;">100G PAM4</td>
+<td style="text-align: center;">CEI-112G</td>
+<td style="text-align: center;">Tomahawk 5 (2022)</td>
+<td style="text-align: center;">128 x 400G (4x100G)</td>
+</tr>
+<tr>
+<td style="text-align: center;">102.4 T（预测）</td>
+<td style="text-align: center;">200G PAM4</td>
+<td style="text-align: center;">CEI-224G</td>
+<td style="text-align: center;">下一代（≈2025+）</td>
+<td style="text-align: center;"><span>128 x 800G (4x200G)<span class="heti-spacing"> </span></span>或<span><span class="heti-spacing"> </span>64 x 1.6T</span>（8x200G，非<span><span class="heti-spacing"> </span>4-Lane</span>）</td>
+</tr>
+</tbody>
+</table>
+<p>说明：上表中的“<span>4-Lane<span class="heti-spacing"> </span></span>端口”指由<span class="heti-skip"><span class="heti-spacing"> </span>4<span class="heti-spacing"> </span></span>个<span class="heti-skip"><span class="heti-spacing"> </span>SerDes<span class="heti-spacing"> </span></span>通道组成的逻辑端口，在常见的国产<span class="heti-skip"><span class="heti-spacing"> </span>GPU<span class="heti-spacing"> </span></span>厂商中比较常见此种配置。例如，一个<span class="heti-skip"><span class="heti-spacing"> </span>100G<span class="heti-spacing"> </span></span>端口由<span class="heti-skip"><span class="heti-spacing"> </span>4x25G<span class="heti-spacing"> </span></span>组成，一个<span class="heti-skip"><span class="heti-spacing"> </span>400G<span class="heti-spacing"> </span></span>端口可由<span class="heti-skip"><span class="heti-spacing"> </span>4x100G<span class="heti-spacing"> </span></span>组成。随着<span class="heti-skip"><span class="heti-spacing"> </span>SerDes<span class="heti-spacing"> </span></span>速率翻倍，单芯片的总交换容量和端口速率也随之翻倍，这是网络技术演进的核心驱动力。</p>
+<h3 id="ocs">光学电路交换（OCS）<a class="headerlink" href="#ocs" title="Permanent link">¶</a></h3>
+<p><strong>Optical Circuit Switching (OCS)</strong> 利用可重配置光开关在源节点和目标节点之间建立直接光学通道，实现高速数据传输而无需经过电子包交换。<span>OCS<span class="heti-spacing"> </span></span>与传统 <strong><span>Ethernet<span class="heti-spacing"> </span></span>或<span><span class="heti-spacing"> </span>InfiniBand Switch ASIC</span></strong> 互为补充：交换芯片提供节点间高速电子包交换和高端口数互连，而<span class="heti-skip"><span class="heti-spacing"> </span>OCS<span class="heti-spacing"> </span></span>则在全局层面增强带宽和拓扑灵活性，为大规模数据中心提供额外的互连能力。</p>
+<p>作为全局链路重构手段，<span>OCS<span class="heti-spacing"> </span></span>可以动态调整网络中的光路连接，在大规模拓扑如<span class="heti-skip"><span class="heti-spacing"> </span>Dragonfly<span class="heti-spacing"> </span></span>或<span class="heti-skip"><span class="heti-spacing"> </span>3D Torus<span class="heti-spacing"> </span></span>中显著提升网络弹性和稀疏化效果。通过在热点链路或稀疏互连之间建立直接光学通道，<span>OCS<span class="heti-spacing"> </span></span>不仅减少了跳数和延迟，还为高带宽密集型任务提供灵活的链路调度能力，使网络能够更高效地应对流量波动和节点故障。</p>
+<h3 id="_8">路由与拥塞控制<a class="headerlink" href="#_8" title="Permanent link"><span><span class="heti-spacing"> </span>¶</span></a></h3>
+<p>路由与拥塞控制是高性能数据中心的核心机制，它通过自适应和最短路径路由策略，在保证低延迟的同时动态调整数据流向，以应对流量变化和网络热点。在节点和交换机级别的局部拥塞感知下，网络可以实时监控链路和队列状态，优化流量分布，提高整体带宽利用率。</p>
+<p>同时，分级流控机制使网络在多层拓扑中能够精细管理不同层级的流量，避免上层或下层节点过载；故障绕行功能则在链路或节点出现故障时自动选择备用路径，保证网络连通性和任务可靠性。通过这些手段，路由与拥塞控制不仅提升了网络性能，还增强了大规模拓扑（如<span><span class="heti-spacing"> </span>Dragonfly</span>、<span>Fat-tree<span class="heti-spacing"> </span></span>或<span><span class="heti-spacing"> </span>3D Torus</span>）在动态负载和故障情况下的弹性。</p>
+<h3 id="fabric">专用<span><span class="heti-spacing"> </span>Fabric</span><a class="headerlink" href="#fabric" title="Permanent link"><span><span class="heti-spacing"> </span>¶</span></a></h3>
+<p><strong>专用<span><span class="heti-spacing"> </span>Fabric</span></strong> 是一种系统级互连架构，它不仅仅是交换芯片或网络拓扑，而是将节点、交换硬件、网络拓扑、通信协议和控制机制有机整合形成的高性能互连体系。其核心目标包括支持<span class="heti-skip"><span class="heti-spacing"> </span>GPU/CPU<span class="heti-spacing"> </span></span>之间的低延迟、高带宽通信，实现从单节点<span class="heti-skip"><span class="heti-spacing"> </span>Scale-Up<span class="heti-spacing"> </span></span>到跨机架<span class="heti-skip"><span class="heti-spacing"> </span>Scale-Out<span class="heti-spacing"> </span></span>的可扩展性，并能够动态应对热点和链路故障，保证网络弹性，同时支持自适应路由、拥塞感知和分级流控，提升系统可控性和负载均衡能力。</p>
+<p><span>Fabric<span class="heti-spacing"> </span></span>的组成涵盖多个层次：在硬件层，节点内互连（如<span><span class="heti-spacing"> </span>NVSwitch/NVLink</span>）提供<span class="heti-skip"><span class="heti-spacing"> </span>GPU<span class="heti-spacing"> </span></span>内部高带宽通信，节点间交换芯片（Ethernet/InfiniBand ASIC）实现机架级数据交换，光交换（OCS）用于动态重构全局链路、增强网络弹性；在拓扑层，不同的物理与逻辑连接方式（如<span><span class="heti-spacing"> </span>Dragonfly</span>、SlimFly、3D Torus、Fat-tree）决定网络直径、延迟和带宽利用率；在控制与协议层，路由算法、拥塞管理和异常处理共同确保大规模集群的高性能、可扩展与可靠性。通过硬件、拓扑和控制机制的紧密整合，专用<span class="heti-skip"><span class="heti-spacing"> </span>Fabric<span class="heti-spacing"> </span></span>为<span class="heti-skip"><span class="heti-spacing"> </span>AI/HPC<span class="heti-spacing"> </span></span>集群提供了低延迟、高带宽且弹性强的系统级互连基础。</p>
+<h2 id="_9">从堆叠链路到弹性稀疏<a class="headerlink" href="#_9" title="Permanent link"><span><span class="heti-spacing"> </span>¶</span></a></h2>
+<ul>
+<li><span>Full-mesh<span class="heti-spacing"> </span></span>在小规模时代表<span class="heti-skip"><span class="heti-spacing"> </span>"<span class="heti-spacing"> </span></span>极致延迟<span><span class="heti-spacing"> </span>"</span>，但端口平方增长不可持续</li>
+<li><span>Fat-tree<span class="heti-spacing"> </span></span>是之前工业界默认解，但在万卡级面临成本与收敛比挑战</li>
+<li>新一代探索（Dragonfly/SlimFly/OCS+Torus）希望用<span class="heti-skip"><span class="heti-spacing"> </span>"<span class="heti-spacing"> </span></span>更少的全局链路<span class="heti-skip"><span class="heti-spacing"> </span>+<span class="heti-spacing"> </span></span>可重构交换<span class="heti-skip"><span class="heti-spacing"> </span>"<span class="heti-spacing"> </span></span>换取接近满二分带宽和低直径，让拓扑从<span class="heti-skip"><span class="heti-spacing"> </span>"<span class="heti-spacing"> </span></span>静态堆叠<span class="heti-skip"><span class="heti-spacing"> </span>"<span class="heti-spacing"> </span></span>转向<span class="heti-skip"><span class="heti-spacing"> </span>"<span class="heti-spacing"> </span></span>弹性稀疏化<span><span class="heti-spacing"> </span>"</span> 【研判】</li>
+</ul>
+<h2 id="_10">参考文献<a class="headerlink" href="#_10" title="Permanent link"><span><span class="heti-spacing"> </span>¶</span></a></h2>
+<div class="footnote">
+<hr/>
+<ol>
+<li id="fn:dragonfly">
+<p><a href="https://ieeexplore.ieee.org/abstract/document/4556717">Technology-Driven, Highly-Scalable Dragonfly Topology (IEEE)</a> <a class="footnote-backref" href="#fnref:dragonfly" title="Jump back to footnote 1 in the text">↩</a></p>
+</li>
+<li id="fn:dragonfly+">
+<p><a href="https://ieeexplore.ieee.org/document/7885210">Dragonfly+: Low Cost Topology for Scaling Datacenters</a> <a class="footnote-backref" href="#fnref:dragonfly+" title="Jump back to footnote 2 in the text">↩</a></p>
+</li>
+<li id="fn:torus">
+<p><a href="http://datasys.cs.iit.edu/reports/2014_GCASR14_paper-torus.pdf">Understanding Torus Network Performance through Simulations</a> <a class="footnote-backref" href="#fnref:torus" title="Jump back to footnote 3 in the text">↩</a></p>
+</li>
+<li id="fn:slimfly">
+<p><a href="https://arxiv.org/pdf/1912.08968">Slim Fly: A Cost Effective Low-Diameter Network Topology</a> <a class="footnote-backref" href="#fnref:slimfly" title="Jump back to footnote 4 in the text">↩</a></p>
+</li>
+</ol>
+</div>
+</article>
+</div>
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
-        </div>
-        
-          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+</div>
+<button class="md-top md-icon" data-md-component="top" hidden="" type="button">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
   回到页面顶部
 </button>
-        
-      </main>
-      
-        <footer class="md-footer">
-  
-  <div class="md-footer-meta md-typeset">
-    <div class="md-footer-meta__inner md-grid">
-      <div class="md-copyright">
-  
-    <div class="md-copyright__highlight">
+</main>
+<footer class="md-footer">
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+<div class="md-copyright__highlight">
       © 2025 DeepLink 团队. 保留所有权利.
     </div>
-  
-  
 </div>
-      
-        
 <div class="md-social">
-  
-    
-    
-    
-    
-      
-      
-    
-    <a href="https://github.com/DeepLink-org/superpod-whitepaper" target="_blank" rel="noopener" title="github.com" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
-    </a>
-  
+<a class="md-social__link" href="https://github.com/DeepLink-org/superpod-whitepaper" rel="noopener" target="_blank" title="github.com">
+<svg viewbox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+</a>
 </div>
-      
-    </div>
-  </div>
+</div>
+</div>
 </footer>
-      
-    </div>
-    <div class="md-dialog" data-md-component="dialog">
-      <div class="md-dialog__inner md-typeset"></div>
-    </div>
-    
-    
-    
-      
-      
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.indexes", "navigation.tracking", "navigation.top", "navigation.expand", "toc.integrate", "search.highlight", "search.share", "content.action.edit", "content.code.copy", "content.code.annotate", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
-    
-    
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
-      
-        <script src="../../javascripts/mathjax.js"></script>
-      
-        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
-      
-        <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
-      
-        <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
-      
-        <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
-      
-        <script src="../../javascripts/charts.js"></script>
-      
-        <script src="../../javascripts/evidence-tags.js"></script>
-      
-    
-  </body>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.indexes", "navigation.tracking", "navigation.top", "navigation.expand", "toc.integrate", "search.highlight", "search.share", "content.action.edit", "content.code.copy", "content.code.annotate", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+<script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+<script src="../../javascripts/mathjax.js"></script>
+<script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+<script src="../../javascripts/charts.js"></script>
+<script src="../../javascripts/evidence-tags.js"></script>
+</body>
 </html>
