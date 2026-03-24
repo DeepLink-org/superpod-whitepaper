@@ -998,19 +998,10 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#ethlink">
-<span class="md-ellipsis">
-      
-        ETHLink
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
 <a class="md-nav__link" href="#eth">
 <span class="md-ellipsis">
       
-        ETH+
+        高通量 ETH+
       
     </span>
 </a>
@@ -1542,7 +1533,7 @@
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"></path></svg>
 </a>
 <h1 id="_1">标准构型（全对等互联<span class="heti-skip"><span class="heti-spacing"> </span>+<span class="heti-spacing"> </span></span>以太型）<a class="headerlink" href="#_1" title="Permanent link">¶</a></h1>
-<p>超节点 <code>Scale-Up</code> 技术旨在实现单机柜或相邻机柜内 <code>32</code> 卡以上规模的 <code>GPU/NPU</code> 高速、低延迟、全互联组网，使多卡系统在逻辑层面呈现为单一超级计算单元，并支撑内存语义及 <code>TP/EP</code> 并行计算模式。传统方案长期依赖 <code>NVIDIA NVLink</code>，其性能突出，但私有封闭架构也限制了跨厂商协同与开放生态发展。自 <code>2025</code> 年起，基于以太网的技术路线开始加速推进：国内以 <code>ETH-X</code>、<code>ETHLink</code>、<code>CLink</code> 为代表，国际则有 <code>SUE</code>、<code>ESUN</code> 等多条方案并行演进。</p>
+<p>超节点 <code>Scale-Up</code> 技术旨在实现单机柜或相邻机柜内 <code>32</code> 卡以上规模的 <code>GPU/NPU</code> 高速、低延迟、全互联组网，使多卡系统在逻辑层面呈现为单一超级计算单元，并支撑内存语义及 <code>TP/EP</code> 并行计算模式。传统方案长期依赖 <code>NVIDIA NVLink</code>，其性能突出，但私有封闭架构也限制了跨厂商协同与开放生态发展。自 <code>2025</code> 年起，基于以太网的技术路线开始加速推进：国内以 <code>ETH-X</code>、<code>CLink</code> 为代表，国际则有 <code>SUE</code>、<code>ESUN</code> 等多条方案并行演进。</p>
 <p>从理论层面看，大模型训练与推理的通信复杂度可写为<span><span class="heti-spacing"> </span><span class="arithmatex">\(O(L \times d \times N \times B)\)</span></span>，其中<span class="heti-skip"><span class="heti-spacing"> </span><span class="arithmatex">\(L\)</span><span class="heti-spacing"> </span></span>为序列长度，<span><span class="arithmatex">\(d\)</span><span class="heti-spacing"> </span></span>为隐层维度，<span><span class="arithmatex">\(N\)</span><span class="heti-spacing"> </span></span>为层数，<span><span class="arithmatex">\(B\)</span><span class="heti-spacing"> </span></span>为批大小。当模型进入 <code>MoE</code> 与长上下文时代，卡间通信会呈现小包高频、高并发、强同步、低时延容忍等特征，传统以太网难以直接满足这类需求；增强型以太 <code>Scale-Up</code> 协议则通过头部压缩、链路重传、信用流控和无阻塞交换等机制，将通信效率从传统以太网的 <code>30%–45%</code> 提升至 <code>92%–98%</code>，逼近 <code>NVLink</code> 级通信效率。</p>
 <p>本节讨论基于以太网技术的 <code>Scale-Up</code> 互联协议，重点分析其架构特点、组网方式、主流实现及后续演进方向。</p>
 <h2 id="_2">架构定义、组网描述与未来演进<a class="headerlink" href="#_2" title="Permanent link"><span><span class="heti-spacing"> </span>¶</span></a></h2>
@@ -1600,31 +1591,15 @@
 <td style="text-align: left;">优化小包<span class="heti-skip"><span class="heti-spacing"> </span>+<span class="heti-spacing"> </span></span>低尾延迟</td>
 <td style="text-align: left;">国际主流（微软<span class="heti-skip"><span class="heti-spacing"> </span>/<span class="heti-spacing"> </span></span>谷歌等）</td>
 </tr>
-<tr>
-<td style="text-align: left;">ETHLink</td>
-<td style="text-align: left;">字节跳动（2025.4）</td>
-<td style="text-align: left;">最大<span><span class="heti-spacing"> </span>1024</span></td>
-<td style="text-align: left;">标准以太帧及<span class="heti-skip"><span class="heti-spacing"> </span>6<span class="heti-spacing"> </span></span>字节<span class="heti-skip"><span class="heti-spacing"> </span>OEFH<span class="heti-spacing"> </span></span>精简头部、LLR、CBFC</td>
-<td style="text-align: left;">单跳交换<span><span class="heti-spacing"> </span>/ Mesh</span></td>
-<td style="text-align: left;">端到端时延<span><span class="heti-spacing"> </span>&lt;400ns</span>、单<span class="heti-skip"><span class="heti-spacing"> </span>GPU<span class="heti-spacing"> </span></span>带宽<span class="heti-skip"><span class="heti-spacing"> </span>800GB/s<span class="heti-spacing"> </span></span>以上</td>
-<td style="text-align: left;">大禹超节点</td>
-</tr>
-<tr>
-<td style="text-align: left;">CLink</td>
-<td style="text-align: left;">工信部及电子四院（2025.10）</td>
-<td style="text-align: left;">最大<span><span class="heti-spacing"> </span>1024</span></td>
-<td style="text-align: left;">支持标准以太帧及头部优化、LLR、CBFC、轻量化<span><span class="heti-spacing"> </span>FEC</span></td>
-<td style="text-align: left;">单跳交换<span><span class="heti-spacing"> </span>/ Mesh</span></td>
-<td style="text-align: left;">单端口<span><span class="heti-spacing"> </span>400G/800G</span>，支持多链路聚合，整机带宽可到<span class="heti-skip"><span class="heti-spacing"> </span>TB<span class="heti-spacing"> </span></span>级</td>
-<td style="text-align: left;">国家标准<span class="heti-skip"><span class="heti-spacing"> </span>CLInk<span class="heti-spacing"> </span></span>超节点</td>
-</tr>
 </tbody>
 </table>
+<!-- | ETHLink | 字节跳动（2025.4） | 最大1024 | 标准以太帧及6字节 OEFH 精简头部、LLR、CBFC | 单跳交换 / Mesh | 端到端时延<400ns、单GPU带宽800GB/s以上 | 大禹超节点 | -->
+<p><span>| CLink |<span class="heti-spacing"> </span></span>工信部及电子四院（2025.10） <span>|<span class="heti-spacing"> </span></span>最大<span class="heti-skip"><span class="heti-spacing"> </span>1024 |<span class="heti-spacing"> </span></span>支持标准以太帧及头部优化、LLR、CBFC、轻量化<span class="heti-skip"><span class="heti-spacing"> </span>FEC |<span class="heti-spacing"> </span></span>单跳交换<span class="heti-skip"><span class="heti-spacing"> </span>/ Mesh |<span class="heti-spacing"> </span></span>单端口<span><span class="heti-spacing"> </span>400G/800G</span>，支持多链路聚合，整机带宽可到<span class="heti-skip"><span class="heti-spacing"> </span>TB<span class="heti-spacing"> </span></span>级<span class="heti-skip"><span class="heti-spacing"> </span>|<span class="heti-spacing"> </span></span>国家标准<span class="heti-skip"><span class="heti-spacing"> </span>CLInk<span class="heti-spacing"> </span></span>超节点<span><span class="heti-spacing"> </span>|</span></p>
 <p><code>NVLink</code> 单端口成本约为增强以太的 <code>3.5–5</code> 倍，整机柜 <code>TCO</code> 高出 <code>40%–60%</code>；而增强型以太 <code>Scale-Up</code> 可在标准以太网硬件基础上，实现延迟 <code>&lt;400 ns</code>、带宽利用率 <code>&gt;95%</code>、丢包率 <code>&lt;1e-12</code> 的类 <code>NVLink</code> 性能。</p>
 <p>上述协议的核心共性是“寄生在标准以太网之上”：</p>
 <ul>
 <li>物理层：<code>100%</code> 或高度复用 <code>IEEE 802.3 SerDes</code>（<code>112G/224G</code> 等<heti-adjacent class="heti-adjacent-half">）</heti-adjacent>，支持标准 <code>OSFP/QSFP-DD</code> 端口、插损预算、<code>CPO/LPO</code> 光模块、<code>Retimer</code> 等。</li>
-<li>链路层：前 <code>14B</code>（<code>DA 6B + SA 6B + Ethertype 2B</code>）结构完全不变，仅重定义字段含义或插入轻量自定义头。理论分析显示，通过优化头部（如 <code>SUE</code> 的 <code>AFH</code> 或 <code>ETHLink</code> 的 <code>OEFH</code><heti-adjacent class="heti-adjacent-half">）</heti-adjacent>，可将协议封装开销占比从传统以太网的约 <code>8%</code>（<span>64<span class="heti-spacing"> </span></span>字节小包）降低至不足 <code>2%</code>，显著提升有效带宽利用率。<code>FCS/CRC</code> 保持标准。交换机可直接转发，无需专用 <code>ASIC</code> 或固件修改。</li>
+<li>链路层：前 <code>14B</code>（<code>DA 6B + SA 6B + Ethertype 2B</code>）结构完全不变，仅重定义字段含义或插入轻量自定义头。理论分析显示，通过优化头部（如 <code>SUE</code> 的 <code>AFH</code><heti-adjacent class="heti-adjacent-half">）</heti-adjacent>，可将协议封装开销占比从传统以太网的约 <code>8%</code>（<span>64<span class="heti-spacing"> </span></span>字节小包）降低至不足 <code>2%</code>，显著提升有效带宽利用率。<code>FCS/CRC</code> 保持标准。交换机可直接转发，无需专用 <code>ASIC</code> 或固件修改。</li>
 </ul>
 <h3 id="_5">组网描述<a class="headerlink" href="#_5" title="Permanent link"><span><span class="heti-spacing"> </span>¶</span></a></h3>
 <p>超节点整机柜需支持不少于<span class="heti-skip"><span class="heti-spacing"> </span>32<span class="heti-spacing"> </span></span>个 <code>GPU/NPU</code> 的 <code>Scale-Up</code> 互联系统。以整机柜超节点构建的高带宽域（<code>HBD</code>, <code>High Bandwidth Domain</code>）为基本单元（覆盖<span class="heti-skip"><span class="heti-spacing"> </span>32<span class="heti-spacing"> </span></span>卡至<span class="heti-skip"><span class="heti-spacing"> </span>64<span class="heti-spacing"> </span></span>卡规模<heti-adjacent class="heti-adjacent-half">）</heti-adjacent>，可通过 <code>Scale-Up</code> 交换板实现纵向扩展（区别于通过参数面 <code>Scale-Out</code> 的横向扩展方案<heti-adjacent class="heti-adjacent-half">）</heti-adjacent>，构建更大规模的高带宽域（最大支持<span class="heti-skip"><span class="heti-spacing"> </span>8192<span class="heti-spacing"> </span></span>卡<heti-adjacent class="heti-adjacent-half">）</heti-adjacent>。图<span class="heti-skip"><span class="heti-spacing"> </span>1<span class="heti-spacing"> </span></span>与图<span class="heti-skip"><span class="heti-spacing"> </span>2<span class="heti-spacing"> </span></span>分别呈现了 <code>HBD</code> 域超节点内部组网架构及扩展组网方案。</p>
@@ -1684,10 +1659,12 @@
 <h3 id="sue">SUE<a class="headerlink" href="#sue" title="Permanent link">¶</a></h3>
 <p>实现思想：轻量协议框架<span><span class="heti-spacing"> </span>+</span> <code>AFH</code>（<code>AI Forwarding Header</code>）头部复用。<code>AFH Gen2</code> 仅 <code>6~12</code> 字节（压缩 <code>MAC</code> 地址为 <code>XPU ID + Hop Count + Entropy</code> 字段<heti-adjacent class="heti-adjacent-half">）</heti-adjacent>，支持端口灵活配置与可编程。</p>
 <p>技术关键<heti-adjacent class="heti-adjacent-half">：</heti-adjacent><code>CBFC</code>（<code>Credit-Based Flow Control</code>，信用流控）替代传统<code>PFC</code><span><span class="heti-spacing"> </span>+</span> <code>LLR</code>（<code>Link-Level Retry</code>，链路层重传）实现零丢包<span class="heti-skip"><span class="heti-spacing"> </span>+<span class="heti-spacing"> </span></span>单跳交换优先级调度。<code>Broadcom</code> 已将 <code>SUE</code> 贡献至 <code>OCP</code> 社区，当前演进为 <code>SUE-T</code>（传输层规范）与 <code>ESUN</code>（<code>Ethernet Scalable Unified Networks</code>，底层以太网框架增强）双轨架构。</p>
-<h3 id="ethlink">ETHLink<a class="headerlink" href="#ethlink" title="Permanent link">¶</a></h3>
-<p>实现思想：分层解耦设计（<code>Scale-Up</code> 语义层<span class="heti-skip"><span class="heti-spacing"> </span>+<span class="heti-spacing"> </span></span>网络转发层<heti-adjacent class="heti-adjacent-half">）</heti-adjacent><heti-adjacent class="heti-adjacent-half">。</heti-adjacent><code>OEFH</code>（<code>Optimized ETH-Link Forwarding Header</code>）仅 <code>6</code> 字节，取代传统 <code>ETH+IP+UDP</code> 头部叠加开销<heti-adjacent class="heti-adjacent-half">；</heti-adjacent><code>RH</code>（<code>Reliability Header</code>）实现硬件级端到端重传。原生支持 <code>Load/Store</code> 内存语义与 <code>RDMA verbs</code> 双语义映射。</p>
-<p>技术关键：协议改动较多，小包场景效率优势显著。</p>
-<h3 id="eth">ETH+<a class="headerlink" href="#eth" title="Permanent link">¶</a></h3>
+<!-- ### ETHLink
+
+实现思想：分层解耦设计（`Scale-Up` 语义层 + 网络转发层）。`OEFH`（`Optimized ETH-Link Forwarding Header`）仅 `6` 字节，取代传统 `ETH+IP+UDP` 头部叠加开销；`RH`（`Reliability Header`）实现硬件级端到端重传。原生支持 `Load/Store` 内存语义与 `RDMA verbs` 双语义映射。
+
+技术关键：协议改动较多，小包场景效率优势显著。 -->
+<h3 id="eth">高通量<span><span class="heti-spacing"> </span>ETH+</span><a class="headerlink" href="#eth" title="Permanent link"><span><span class="heti-spacing"> </span>¶</span></a></h3>
 <p>实现思想：帧格式深度优化<span class="heti-skip"><span class="heti-spacing"> </span>+<span class="heti-spacing"> </span></span>双层重传机制。通过报文头压缩与机会性拼包，有效载荷比提升至 <code>74%</code>（小包场景<heti-adjacent class="heti-adjacent-half">）</heti-adjacent>；链路层<code>LLR</code><span class="heti-skip"><span class="heti-spacing"> </span>+<span class="heti-spacing"> </span></span>物理层重传协同<span class="heti-skip"><span class="heti-spacing"> </span>+<span class="heti-spacing"> </span></span><code>RDMA</code>网内计算（<code>CCA</code>）卸载。统一 <code>Scale-Up</code> 与 <code>Scale-Out</code> 技术底座，避免异构网络割裂。</p>
 <p>技术关键：首款国产 <code>400G</code> 全支持，已开源协议 <code>IP</code>。</p>
 <h3 id="eth-x">ETH-X<a class="headerlink" href="#eth-x" title="Permanent link">¶</a></h3>
