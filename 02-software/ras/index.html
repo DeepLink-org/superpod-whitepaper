@@ -784,11 +784,20 @@
     </span>
 </a>
 </li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#ras_12">
+<span class="md-ellipsis">
+      
+        训练与推理平台的 RAS 建设
+      
+    </span>
+</a>
+</li>
 </ul>
 </nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#ras_12">
+<a class="md-nav__link" href="#ras_14">
 <span class="md-ellipsis">
       
         RAS 系统最佳实践
@@ -798,7 +807,7 @@
 <nav aria-label="RAS 系统最佳实践" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#ras_13">
+<a class="md-nav__link" href="#ras_15">
 <span class="md-ellipsis">
       
         RAS 指标清单与目标值
@@ -816,7 +825,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#_4">
+<a class="md-nav__link" href="#_8">
 <span class="md-ellipsis">
       
         典型故障剧本与演练计划
@@ -1660,9 +1669,82 @@
 <p>总体而言，<span>eBPF<span class="heti-spacing"> </span></span>并非替代所有监控工具，而是作为跨层事件关联的核心枢纽，与现有工具协同构建统一可观测框架。</p>
 <p>基于超节点的模型训练和推理传统依赖<span class="heti-skip"><span class="heti-spacing"> </span>checkpoint<span class="heti-spacing"> </span></span>的被动恢复机制难以应对灰色故障、性能长尾与跨层耦合问题。构建统一、低侵入、跨层关联的可观测体系至关重要。<span>eBPF<span class="heti-spacing"> </span></span>通过在内核态与用户态提供动态插桩能力，使系统能够在不修改训练代码的前提下采集关键事件，并通过统一时间线实现硬件、操作系统、通信运行时与训练语义之间的关联分析。尽管在<span class="heti-skip"><span class="heti-spacing"> </span>GPU<span class="heti-spacing"> </span></span>等异构硬件场景下仍需与厂商工具协同，但其作为跨层事件融合枢纽的角色具有独特优势。</p>
 <p>面向未来的分布式训练基础设施，以<span class="heti-skip"><span class="heti-spacing"> </span>eBPF<span class="heti-spacing"> </span></span>为核心构建可观测与事件关联框架，有望实现快速故障定位、性能退化识别与预测性维护，从而提升<span class="heti-skip"><span class="heti-spacing"> </span>ETTR<span class="heti-spacing"> </span></span>与<span><span class="heti-spacing"> </span>Goodput</span>，降低<span><span class="heti-spacing"> </span>MTTR</span>，并在规模扩展条件下保持稳定、高效与可运维的系统运行能力。</p>
-<h2 id="ras_12"><span>RAS<span class="heti-spacing"> </span></span>系统最佳实践<a class="headerlink" href="#ras_12" title="Permanent link"><span><span class="heti-spacing"> </span>¶</span></a></h2>
+<h3 id="ras_12">训练与推理平台的<span class="heti-skip"><span class="heti-spacing"> </span>RAS<span class="heti-spacing"> </span></span>建设<a class="headerlink" href="#ras_12" title="Permanent link"><span><span class="heti-spacing"> </span>¶</span></a></h3>
+<h4 id="_4">背景<a class="headerlink" href="#_4" title="Permanent link"><span><span class="heti-spacing"> </span>¶</span></a></h4>
+<p>如果说前文讨论的是芯片、网络、操作系统与运行时层面的 <code>RAS</code> 能力，那么落到训练与推理平台，核心问题就变成如何将这些底层信号组织成<strong>面向任务的诊断、恢复与经验闭环能力</strong>。随着大模型训练与推理规模持续增长，平台侧的可靠性问题也在从局部运维议题演变为<strong>系统性工程问题</strong>。在训练场景中，尤其是预训练任务，系统已经逐步逼近万卡级运行规模；在推理场景中，随着长上下文、高并发、多副本以及复杂并行策略的引入，平台同样面临越来越高的稳定性、可用性与可服务性要求。与此同时，大量中小规模任务长期并行运行，也在持续抬升整体运维与排障成本。</p>
+<p>从系统视角来看，无论是训练任务还是推理任务，本质上都运行在一个<strong>高度耦合的分布式基础设施</strong>之上。这套基础设施覆盖服务器、GPU、网络、存储、调度系统、虚拟网络、训练框架、通信库以及上层任务编排等多个层级。计算、通信、数据读取、访存、<code>checkpoint</code> 与恢复等行为在同一运行过程中交错发生，使得用户最终观察到的异常现象，往往只是底层复杂问题在任务层的一种外在呈现。</p>
+<p>例如，用户看到的可能只是任务中断、训练速度下降、通信超时、进程挂起、推理时延抖动或吞吐下降，但这些现象背后的根因并不一定发生在同一层。问题可能来自硬件故障、网络抖动、存储异常、驱动兼容性问题、运行时环境问题，甚至可能是多个层面共同作用的结果。也正因如此，训练平台与推理平台的 <code>RAS</code> 建设，已经无法继续停留在<strong>“告警加人工排查”</strong>的传统模式上，而必须逐步演进为一套<strong>面向任务、面向系统、面向经验闭环的整体能力体系</strong>。</p>
+<p><img alt="" src="../imgs/image21.png"/></p>
+<h4 id="_5">当前面临的核心问题<a class="headerlink" href="#_5" title="Permanent link"><span><span class="heti-spacing"> </span>¶</span></a></h4>
+<p>结合现有平台实践，可以将当前平台侧 <code>RAS</code> 面临的主要问题概括为以下几个方面。</p>
+<p><strong>任务规模扩大后，故障影响半径显著放大。</strong> 当任务规模从单机或小规模多机扩展到数百卡、数千卡乃至万卡级别之后，单个节点、单条链路、单个存储路径或单个设备侧异常，都可能迅速被放大为任务级中断或性能退化问题。推理平台同样如此，一个局部组件的异常，也可能进一步演化为整体尾时延上升、吞吐波动或副本失衡。</p>
+<p><strong>大量异常难以通过单点告警直接定界。</strong> 当前系统中，部分故障能够通过硬件告警直接发现，但仍有大量异常并不存在清晰、明确的告警信号。特别是在通信挂起、慢任务、僵尸任务、异常退出、设备报错等场景中，即便系统已经暴露出异常现象，也往往难以依靠单一数据源直接判断根因位置。</p>
+<p><strong>数据分散，缺少按任务统一组织的诊断视图。</strong> 当前观测数据通常分散在告警系统、指标系统、日志系统、平台状态系统和作业系统等多个数据源中。这些数据源彼此独立，缺乏围绕任务视角进行统一关联与解释的机制，导致平台侧很难快速回答几个最关键的问题：究竟是哪一个任务受到了影响，影响范围有多大，对应哪些节点、<code>rank</code>、通信关系和存储路径，以及当前最可疑的故障点究竟位于哪里。</p>
+<p><strong>人工排障高度依赖经验，过程缺乏可复用性。</strong> 目前，大量排障工作仍高度依赖人工经验。经验本身当然有价值，甚至往往是解决复杂问题最有效的基础；但问题在于，这些经验通常分散在不同工程师的个人认知、即时沟通记录或零散文档之中，难以转化为可重复执行的流程与规则。这意味着相似问题每次出现时，排障过程都可能重新开始，缺乏稳定的方法论与持续复用能力。</p>
+<p><strong>跨层协作成本高，定位时间长。</strong> 当任务出现挂起、性能下降或中断时，排障过程往往需要服务器、网络、存储、平台、框架乃至算法多方协同推进。在缺少统一排障抽象的前提下，故障定位通常需要数小时甚至数天，这不仅直接影响用户体验，也显著提高了平台内部的服务成本。</p>
+<p><strong>用户缺少面向任务的统一入口。</strong> 即使平台底层已经掌握部分风险信号，用户通常也很难基于任务 <code>ID</code> 直接获得面向任务的诊断结果。对用户而言，平台缺少一个统一入口，用于快速查看该任务关联的服务器、网络、存储是否存在明显异常，也缺少一套真正围绕任务组织的 <code>RAS</code> 产品形态。</p>
+<p>从这些问题可以看出，平台当前缺少的并不是更多单点工具，而是一套<strong>围绕“任务”组织观测、诊断与恢复的系统能力</strong>。换言之，平台需要的是一个真正<strong>以任务为中心的诊断与协调机制</strong>，能够统一关联节点、<code>rank</code>、通信关系、文件路径、<code>checkpoint</code> 行为、日志时间线与告警事件，并沿着明确的排查路径给出更稳定、更可执行的故障判断。</p>
+<h4 id="_6">已有经验沉淀<a class="headerlink" href="#_6" title="Permanent link"><span><span class="heti-spacing"> </span>¶</span></a></h4>
+<ul>
+<li><strong>从任务视角组织系统化排障</strong></li>
+</ul>
+<p>现有实践中，一个最重要的经验是：排障能力只有真正回到<strong>任务视角</strong>，才可能具备稳定的解释力和可操作性。相比于简单新增一层告警，更关键的是将不同层级的数据源和检查手段组织成一条<strong>系统化的排障链路</strong>，使平台能够围绕任务对象完成故障定界、故障定位和经验沉淀。</p>
+<p>这类方法的核心目标通常包括三个方面。首先，是判断问题究竟来自代码侧还是集群侧，并进一步区分服务器、网络、存储、基础服务等方向；其次，是在完成定界之后继续缩小范围，定位到具体的嫌疑节点、链路、通信组或路径；最后，是将一线排障经验逐步沉淀为可重复执行的流程、规则与案例。</p>
+<p>从已有方法来看，较为有效的路径通常是：先建立任务与基础设施对象之间的关联关系，例如作业与节点、节点与 <code>rank</code>、<code>rank</code> 与通信组、节点与存储路径之间的映射；再根据故障表现区分初始化失败、性能下降、任务中断等不同场景；最后围绕服务器、物理网络、虚拟网络、通信层、存储层和基础服务等多个层面组织检查项，形成面向不同场景的诊断路径。</p>
+<p>这类经验对未来<span class="heti-skip"><span class="heti-spacing"> </span>SuperPod<span class="heti-spacing"> </span></span>的启发非常明确：未来 <code>RAS</code> 系统必须天然以任务为中心，而不能仅仅以基础设施为中心。因为只有当基础设施指标被映射回任务语义之后，它们才真正对用户和平台具有可操作价值。</p>
+<ul>
+<li><strong>从事后分析走向在线检测与自动触发</strong></li>
+</ul>
+<p>另一个关键经验是，平台能力必须逐步从事后排查演进到<strong>在线检测与自动触发诊断</strong>。相较于等待用户反馈或任务彻底失败之后再介入，更有效的方式是在任务运行过程中持续感知异常，并在识别到高风险信号之后自动触发后续诊断动作。</p>
+<p>这种能力的重要价值主要体现在两个方面。第一，异常检测时机可以明显前移，从而减少问题扩散和现场信息丢失。第二，检测与诊断之间可以形成闭环：系统识别到可疑任务之后，不再停留在“发现异常”的层面，而是能够进一步保留现场信息、触发补充检查，并为后续定界与定位提供依据。</p>
+<p>这说明未来 <code>RAS</code> 系统不应只是一个静态分析系统，而必须具备持续在线感知、自动触发诊断和自动保留现场信息的能力。对于长周期训练任务和大规模推理服务而言，这种能力几乎不可或缺，因为一旦错过故障发生窗口，后续定位成本往往会大幅上升。</p>
+<ul>
+<li><strong>观测能力需要向底层运行时与通信层持续下钻</strong></li>
+</ul>
+<p>在实际排障过程中，仅依赖任务日志和硬件告警，往往无法解释大量“没有明确报错，但任务确实异常”的问题。一个重要经验是，平台观测能力必须能够在必要时继续<strong>下钻到通信事件、运行时行为以及设备侧细节</strong>，才能对复杂问题形成更有解释力的判断。</p>
+<p>这背后反映出的事实是，大规模训练与推理中的很多问题，并不是简单意义上的“节点坏了”或“服务挂了”，而是发生在软硬件边界处的复杂系统行为。因此，真正有价值的 <code>RAS</code> 系统，既要能够告诉用户“哪里出了问题”，也要尽量回答“为什么会出问题”“如何复现”“如何规避”。</p>
+<p>这也意味着，未来<span class="heti-skip"><span class="heti-spacing"> </span>SuperPod<span class="heti-spacing"> </span></span>的观测体系必须具备分层能力：既要有面向任务、面向用户和面向平台调度的高层抽象，也要能在必要时向下钻取通信、访存、设备和运行时层面的细节信息。</p>
+<ul>
+<li><strong>经验积累必须形成案例闭环</strong></li>
+</ul>
+<p>从既有实践中还可以看到，许多线上高频问题都具有较强的复现模式。通信挂起、异常退出、设备报错、驱动与环境不匹配、混部兼容性问题等，往往并不是完全随机发生，而是会在不同时间、不同任务中反复出现。真正有价值的经验沉淀，不仅是记录问题现象本身，更包括<strong>候选根因、现场追溯能力、临时缓解方案以及长期修复动作</strong>。</p>
+<p>这意味着平台 <code>RAS</code> 的目标不应只是一次次从零开始排障，而应当逐步把历史故障转化为未来的快速诊断与自动处置能力。对于<span class="heti-skip"><span class="heti-spacing"> </span>SuperPod<span class="heti-spacing"> </span></span>而言，案例积累不应被视为附属工作，而应被看作系统输入的一部分。</p>
+<h4 id="ras_13">对未来训练与推理平台<span class="heti-skip"><span class="heti-spacing"> </span>RAS<span class="heti-spacing"> </span></span>设计的启发<a class="headerlink" href="#ras_13" title="Permanent link"><span><span class="heti-spacing"> </span>¶</span></a></h4>
+<p>基于上述经验，可以提炼出未来训练与推理平台在 <code>RAS</code> 方向上至少需要坚持的几项原则。</p>
+<ul>
+<li><strong>以任务为中心组织能力</strong></li>
+</ul>
+<p>所有观测、告警、诊断和恢复动作，最终都应映射到任务对象本身，能够明确回答：哪一个任务受到了影响，影响范围有多大，当前任务是否还能继续运行，以及平台建议采取什么恢复动作。</p>
+<ul>
+<li><strong>以分层诊断替代单点告警</strong></li>
+</ul>
+<p>原子告警仍然重要，但它只能被视为诊断链路中的一个输入，而不应等同于诊断本身。未来系统需要同时具备规则排障、主动探测、在线诊断、案例检索与趋势分析等多层能力，才能形成真正可用的 <code>RAS</code> 体系。</p>
+<ul>
+<li><strong>以自动化方式沉淀人工经验</strong></li>
+</ul>
+<p>排障路径、判断规则、典型案例以及缓解动作都应逐步模块化，而不应长期依赖少数个体经验。只有这样，系统才能在规模增长的过程中保持稳定的可服务能力。</p>
+<ul>
+<li><strong>以关键指标驱动系统建设</strong></li>
+</ul>
+<p>后续系统模块设计和阶段目标拆解，应围绕若干核心指标展开，包括：</p>
+<ul>
+<li>任务实际有效运行时长<span class="heti-skip"><span class="heti-spacing"> </span>/<span class="heti-spacing"> </span></span>有效训练时间占比</li>
+<li>异常检测时延</li>
+<li>故障定界准确率</li>
+<li>
+<p>故障定位时间</p>
+</li>
+<li>
+<p><strong>训练平台与推理平台共用方法论、分化实现形态</strong></p>
+</li>
+</ul>
+<p>训练与推理在外部表现和恢复策略上存在差异：训练更强调长周期稳定性、<code>checkpoint</code> 保护与恢复效率，推理更强调服务连续性、时延抖动控制和快速隔离。但从方法论上看，两者底层是一致的：都需要从任务视角组织对象关系、建立异常时间线、关联多源数据，并基于影响范围与恢复代价选择处理动作。因此，未来平台可以在统一方法论之下，针对训练和推理分别设计不同的实现形态。</p>
+<h4 id="_7">小结<a class="headerlink" href="#_7" title="Permanent link"><span><span class="heti-spacing"> </span>¶</span></a></h4>
+<p>综合已有实践可以看到，训练与推理平台 <code>RAS</code> 已经逐步形成了一条较为清晰的演进路径：<strong>从被动告警走向任务视角诊断，从人工排障走向经验沉淀，从事后分析走向在线检测与自动触发，从高层现象观察走向底层运行时与通信事件观测</strong>。</p>
+<p>对未来的训练与推理平台而言，这些经验的意义并不在于简单复用某个已有工具，而在于确认了一条可扩展的系统建设路径：<strong>首先围绕任务建立统一观测与诊断抽象；其次围绕关键指标定义能力边界与建设优先级；最后将 <code>RAS</code> 能力内建到平台调度、通信、观测和恢复链路中</strong>，逐步形成面向超大规模集群的系统级可靠性基础设施。</p>
+<h2 id="ras_14"><span>RAS<span class="heti-spacing"> </span></span>系统最佳实践<a class="headerlink" href="#ras_14" title="Permanent link"><span><span class="heti-spacing"> </span>¶</span></a></h2>
 <p>综合前文硬件为中心与软件为中心两条路线的讨论，超节点的 <code>RAS</code> 体系最终要落到一条完整闭环上：<strong>预防 → 检测 → 恢复 → 复盘</strong>。只有当这条链路持续运转起来，<code>RAS</code> 才不再只是设计原则，而会真正变成系统每天都在执行的运行机制。以下从指标体系、<code>Telemetry</code> 管线和故障演练三个维度给出建议框架。</p>
-<h3 id="ras_13"><span>RAS<span class="heti-spacing"> </span></span>指标清单与目标值<a class="headerlink" href="#ras_13" title="Permanent link"><span><span class="heti-spacing"> </span>¶</span></a></h3>
+<h3 id="ras_15"><span>RAS<span class="heti-spacing"> </span></span>指标清单与目标值<a class="headerlink" href="#ras_15" title="Permanent link"><span><span class="heti-spacing"> </span>¶</span></a></h3>
 <table>
 <thead>
 <tr>
@@ -1721,7 +1803,7 @@
 <li><strong>告警层</strong>：实行三级告警——<strong>P0</strong>（作业中断<span class="heti-skip"><span class="heti-spacing"> </span>/ UE /<span class="heti-spacing"> </span></span>链路断连，立即触发自愈或值班响应<heti-adjacent class="heti-adjacent-half">）</heti-adjacent>、<strong>P1</strong>（性能退化<span class="heti-skip"><span class="heti-spacing"> </span>&gt;15% / CE<span class="heti-spacing"> </span></span>突增<span class="heti-skip"><span class="heti-spacing"> </span>/ Pre-FEC BER<span class="heti-spacing"> </span></span>趋近阈值，<span>5<span class="heti-spacing"> </span></span>分钟内响应<heti-adjacent class="heti-adjacent-half">）</heti-adjacent>、<strong>P2</strong>（轻微抖动<span class="heti-skip"><span class="heti-spacing"> </span>/<span class="heti-spacing"> </span></span>温度预警，纳入日报复盘<heti-adjacent class="heti-adjacent-half">）</heti-adjacent>。</li>
 <li><strong>归档层</strong>：所有故障事件形成结构化<span><span class="heti-spacing"> </span>Incident Record</span>（时间戳、根因分类、影响范围、恢复动作、耗时<heti-adjacent class="heti-adjacent-half">）</heti-adjacent>，输入故障知识库，用于后续根因建模与预测性维护。</li>
 </ol>
-<h3 id="_4">典型故障剧本与演练计划<a class="headerlink" href="#_4" title="Permanent link"><span><span class="heti-spacing"> </span>¶</span></a></h3>
+<h3 id="_8">典型故障剧本与演练计划<a class="headerlink" href="#_8" title="Permanent link"><span><span class="heti-spacing"> </span>¶</span></a></h3>
 <table>
 <thead>
 <tr>
