@@ -8,10 +8,10 @@
 
 ```bash
 # 使用 pip
-pip install mkdocs mkdocs-material mkdocs-material-extensions jieba
+pip install -e .
 
 # 或使用 uv
-uv pip install -r pyproject.toml
+uv sync && source .venv/bin/activate
 ```
 
 ### 本地预览
@@ -58,7 +58,7 @@ mkdocs gh-deploy --force
 
 ## 目录结构
 
-```
+```bash
 superpod-whitepaper/
 ├── mkdocs.yml          # MkDocs 配置文件
 ├── pyproject.toml      # Python 项目配置

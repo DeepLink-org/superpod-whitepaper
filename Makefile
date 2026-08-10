@@ -16,13 +16,18 @@ help:
 
 # Install dependencies
 install:
-	@echo "正在安装文档依赖..."
-	pip install -r requirements.txt
+	@if command -v uv >/dev/null 2>&1; then \
+		echo "检测到 uv，使用 uv 安装依赖..."; \
+		uv sync; \
+	else \
+		echo "未检测到 uv，使用 pip 安装依赖..."; \
+		python -m pip install -e .; \
+	fi
 
 # Generate SPI registry page
 spi:
 	@echo "正在生成 SPI 已收录产品页面..."
-	python3 scripts/generate_spi_registry.py
+	python scripts/generate_spi_registry.py
 
 # Live preview server
 serve:

@@ -14,15 +14,26 @@ keywords: "MkDocs,Material,Markdown,Admonitions,Mermaid,Vega-Lite,脚注,项目�
 ## 项目结构
 
 ```bash
-.
-├── mkdocs.yml          # 站点配置文件
-├── requirements.txt    # Python 依赖
-├── src/                # 文档源文件
-│   ├── assets/         # 静态资源（图片、CSS、JS）
-│   ├── 01-architecture/
-│   ├── ...
-│   └── index.md        # 首页
-└── overrides/          # 主题覆盖模板
+superpod-whitepaper/
+├── mkdocs.yml          # MkDocs 配置文件
+├── pyproject.toml      # Python 项目配置
+├── Makefile            # 构建脚本
+├── README.md           # 本文件
+├── overrides/          # 模板覆盖
+│   └── main.html
+└── src/                # 文档源文件
+    ├── index.md        # 首页
+    ├── architecture/   # 架构分析
+    ├── software/       # 软件系统
+    ├── simulation/     # 建模仿真
+    ├── reference-designs/  # 参考设计
+    ├── future/         # 未来演进
+    ├── conclusion.md   # 总结
+    ├── appendix.md     # 附录
+    └── assets/         # 静态资源
+        ├── stylesheets/
+        ├── images/
+        └── javascripts/
 ```
 
 ## 常用排版语法
