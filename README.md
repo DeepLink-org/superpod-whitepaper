@@ -58,7 +58,7 @@ mkdocs gh-deploy --force
 
 ## 目录结构
 
-```
+```bash
 superpod-whitepaper/
 ├── mkdocs.yml          # MkDocs 配置文件
 ├── pyproject.toml      # Python 项目配置
